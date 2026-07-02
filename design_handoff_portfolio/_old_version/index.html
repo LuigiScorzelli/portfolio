@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Portfolio di Luigi Scorzelli, Full-Stack Developer e AI Engineer specializzato in agenti AI, RAG, workflow n8n, automazioni e integrazioni business."
+    />
+    <title>Luigi Scorzelli | Full-Stack Developer & AI Engineer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header" data-header>
+      <a class="brand" href="#top" aria-label="Torna all'inizio">
+        <span class="brand-mark">LS</span>
+        <span>Luigi Scorzelli</span>
+      </a>
+      <button class="menu-toggle" type="button" aria-label="Apri menu" aria-expanded="false" data-menu-toggle>
+        <span></span>
+        <span></span>
+      </button>
+      <nav class="nav" data-nav>
+        <a href="#servizi">Servizi</a>
+        <a href="#affidabilita">Affidabilità</a>
+        <a href="#chi-sono">Chi sono</a>
+        <a href="#progetti">Case study</a>
+        <a href="#stack">Stack</a>
+        <a href="#contatti">Contatti</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-media" aria-hidden="true"></div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+          <p class="eyebrow">Full-Stack Developer & AI Engineer</p>
+          <h1 id="hero-title">Automazioni AI per PMI: meno lavoro manuale, processi più veloci.</h1>
+          <p class="hero-copy">
+            Progetto workflow AI, integrazioni CRM, webhook e applicazioni full-stack pensate per processi reali:
+            validazione input, gestione errori, log, fallback umano e deploy.
+          </p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="mailto:luigidev2018@gmail.com?subject=Richiesta%20automazione%20AI">Parliamo del progetto</a>
+            <a class="button button-secondary" href="#progetti">Vedi i case study</a>
+          </div>
+          <dl class="hero-stats" aria-label="Sintesi profilo">
+            <div>
+              <dt>5+ anni</dt>
+              <dd>sviluppo web</dd>
+            </div>
+            <div>
+              <dt>n8n + API</dt>
+              <dd>CRM, webhook, automazioni</dd>
+            </div>
+            <div>
+              <dt>Production-ready</dt>
+              <dd>log, retry, fallback</dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
+      <section class="intro-band" aria-label="Posizionamento">
+        <div class="container intro-grid">
+          <p class="section-kicker">Posizionamento per Upwork e Fiverr</p>
+          <div>
+            <h2>Non vendo “prompt”: consegno sistemi collegati ai processi reali.</h2>
+            <p>
+              Il valore sta dove un abbonamento AI non arriva: CRM, form, gestionali, knowledge base private,
+              documenti, database, webhook sicuri, logging, deployment e automazioni che girano senza presidio.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="servizi">
+        <div class="container">
+          <div class="section-heading">
+            <p class="section-kicker">Servizi vendibili</p>
+            <h2>Offerte chiare per clienti che hanno un problema operativo.</h2>
+          </div>
+          <div class="service-grid">
+            <article class="service-card">
+              <span class="service-index">01</span>
+              <h3>Agenti AI per processi interni</h3>
+              <p>
+                Chatbot WhatsApp o widget web con RAG, memoria conversazionale, handoff umano e risposte basate su
+                documentazione aziendale.
+              </p>
+              <ul>
+                <li>FAQ, prenotazioni, richieste clienti</li>
+                <li>Knowledge base privata e tracciabile</li>
+                <li>Demo misurabile con tempi di risposta</li>
+              </ul>
+            </article>
+            <article class="service-card accent-teal">
+              <span class="service-index">02</span>
+              <h3>Workflow n8n e integrazioni</h3>
+              <p>
+                Automazioni end-to-end tra form, CRM, email, fogli, API e sistemi aziendali, con AI dove serve davvero.
+              </p>
+              <ul>
+                <li>Lead capture e qualifica automatica</li>
+                <li>Scrittura su CRM o Google Sheet</li>
+                <li>Email e notifiche personalizzate</li>
+              </ul>
+            </article>
+            <article class="service-card accent-coral">
+              <span class="service-index">03</span>
+              <h3>Web app e MVP AI-enabled</h3>
+              <p>
+                Applicazioni su misura per preventivi, dashboard dati, upload documenti, assistenti interni e strumenti
+                operativi.
+              </p>
+              <ul>
+                <li>Frontend Vue / Angular</li>
+                <li>Backend Laravel, Node.js o Python</li>
+                <li>Deploy, API e database</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section readiness-section" id="affidabilita">
+        <div class="container">
+          <div class="section-heading split">
+            <div>
+              <p class="section-kicker">Production-ready AI automations</p>
+              <h2>Automazioni progettate per funzionare anche fuori dalla demo perfetta.</h2>
+            </div>
+            <p>
+              Il lavoro non si ferma al workflow che “gira una volta”: documento stati, errori, fallback e controlli per
+              rendere il sistema comprensibile, verificabile e mantenibile.
+            </p>
+          </div>
+
+          <div class="readiness-grid">
+            <article>
+              <span>01</span>
+              <h3>Input e webhook sicuri</h3>
+              <p>Validazione dei payload, HTTPS, credenziali fuori dal codice, token con scope minimi e controlli sui dati ricevuti.</p>
+            </article>
+            <article>
+              <span>02</span>
+              <h3>Error handling e retry</h3>
+              <p>Gestione di timeout, errori 429/5xx, retry con backoff, alert e code di recupero per i casi non processati.</p>
+            </article>
+            <article>
+              <span>03</span>
+              <h3>Log e audit trail</h3>
+              <p>Tracciamento di execution id, stato del processo, payload minimo necessario e passaggi critici del workflow.</p>
+            </article>
+            <article>
+              <span>04</span>
+              <h3>Fallback umano</h3>
+              <p>Revisione manuale per output ambigui, confidence bassa, richieste critiche o casi che l'AI non deve gestire da sola.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section about-section" id="chi-sono">
+        <div class="container about-layout">
+          <div class="about-copy">
+            <p class="section-kicker">Chi sono</p>
+            <h2>Sviluppatore full-stack con focus su AI engineering e automazioni operative.</h2>
+            <p>
+              Sono Luigi Scorzelli, Full-Stack Developer con oltre 5 anni di esperienza nello sviluppo di applicazioni
+              web dinamiche. Nell'ultimo anno mi sono specializzato nella progettazione e messa in produzione di sistemi
+              basati su AI generativa: agenti LLM, workflow n8n, applicazioni agentiche e architetture RAG.
+            </p>
+            <p>
+              Il mio punto di forza è unire competenze software e AI engineering: traduco esigenze di business in flussi
+              concreti, collegando frontend, backend, API, CRM, database e strumenti aziendali.
+            </p>
+          </div>
+          <div class="about-panel" aria-label="Sintesi esperienza e competenze">
+            <div>
+              <span>Esperienza</span>
+              <strong>Freelance, web agency e clienti diretti</strong>
+              <p>Analisi requisiti, sviluppo full-stack, integrazioni API e rilascio in produzione.</p>
+            </div>
+            <div>
+              <span>Stack principale</span>
+              <strong>Vue, Angular, Laravel, Node.js, Python</strong>
+              <p>Frontend, backend, REST API, MySQL, Docker, GitHub Actions e deploy cloud.</p>
+            </div>
+            <div>
+              <span>AI engineering</span>
+              <strong>n8n, LangChain, LangGraph, OpenAI Agents SDK</strong>
+              <p>RAG, embeddings, vector database, function calling, guardrails e prompt injection mitigation.</p>
+            </div>
+            <div>
+              <span>Lingue</span>
+              <strong>Italiano madrelingua, Inglese C1</strong>
+              <p>Disponibile per clienti italiani e collaborazioni remote internazionali.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section muted" id="progetti">
+        <div class="container">
+          <div class="section-heading split">
+            <div>
+              <p class="section-kicker">Proof of work</p>
+              <h2>Case study dimostrativi costruiti per acquisire clienti.</h2>
+            </div>
+            <p>
+              Sezione in evoluzione: i progetti verranno approfonditi con demo, screenshot, architettura, metriche e
+              casi limite testati.
+            </p>
+          </div>
+
+          <div class="case-list">
+            <article class="case-study featured">
+              <div class="case-meta">
+                <span>Case study attivo</span>
+                <span>WhatsApp + RAG + n8n</span>
+              </div>
+              <div class="case-body">
+                <div>
+                  <h3>Assistente clienti WhatsApp con knowledge base RAG</h3>
+                  <p>
+                    Demo per uno studio dentistico fittizio: l'utente scrive su WhatsApp o nel widget del sito, l'agente
+                    recupera informazioni dalla knowledge base, risponde in italiano e smista le richieste fuori scope a
+                    un operatore.
+                  </p>
+                </div>
+                <div class="case-proof">
+                  <strong>Output portfolio</strong>
+                  <span>Landing demo, workflow n8n, schema Neon PostgreSQL + pgvector, video conversazione, metriche.</span>
+                </div>
+              </div>
+            </article>
+
+            <article class="case-study">
+              <div class="case-meta">
+                <span>Nuovo case study</span>
+                <span>AI Sales Chat + HubSpot</span>
+              </div>
+              <div class="case-body">
+                <div>
+                  <h3>AI Sales Chat per e-commerce collegata a HubSpot</h3>
+                  <p>
+                    Demo per uno store fitness fittizio: il widget chat risponde su catalogo e policy, qualifica
+                    l'intento d'acquisto, raccoglie consenso e prepara Contact, Deal, Task e Note su HubSpot.
+                  </p>
+                </div>
+                <div class="case-proof">
+                  <strong>Output portfolio</strong>
+                  <span>Shop demo statico, knowledge base prodotti, workflow n8n base, specifiche tecniche e test casi limite.</span>
+                </div>
+              </div>
+            </article>
+
+            <article class="case-study">
+              <div class="case-meta">
+                <span>Progetto commerciale</span>
+                <span>Document AI + gestionale</span>
+              </div>
+              <div class="case-body">
+                <div>
+                  <h3>Estrazione dati da documenti verso gestionale</h3>
+                  <p>
+                    Upload di fatture, ordini o PDF; estrazione strutturata con AI; validazione; scrittura su gestionale,
+                    CRM o foglio aziendale.
+                  </p>
+                </div>
+                <div class="case-proof">
+                  <strong>Metrica demo</strong>
+                  <span>Da reinserimento manuale a riga strutturata pronta, con meno passaggi e meno errori.</span>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="stack">
+        <div class="container stack-layout">
+          <div class="section-heading sticky-heading">
+            <p class="section-kicker">Competenze tecniche</p>
+            <h2>Stack adatto a consegne reali, non solo prototipi.</h2>
+            <p>
+              Combino esperienza full-stack con strumenti AI moderni per costruire flussi completi: UI, backend, API,
+              database, orchestration e deploy.
+            </p>
+          </div>
+          <div class="stack-groups">
+            <article>
+              <h3>AI Engineering</h3>
+              <p>AI Agents, LLM, RAG, function calling, multi-agent systems, guardrails, tracing, prompt injection mitigation.</p>
+            </article>
+            <article>
+              <h3>Framework AI</h3>
+              <p>LangChain, LangGraph, OpenAI Agents SDK, Claude Code, n8n, embeddings, vector database, Chroma, pgvector.</p>
+            </article>
+            <article>
+              <h3>Full-stack</h3>
+              <p>Vue.js, Angular, JavaScript, HTML5, CSS3, Laravel, Node.js, Python, REST API, MySQL, Prestashop.</p>
+            </article>
+            <article>
+              <h3>DevOps e qualità</h3>
+              <p>Git, GitHub, Docker, GitHub Actions, Google Cloud Run, Pytest, MLflow, deploy su VPS e workflow CI/CD.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section dark-section" aria-labelledby="process-title">
+        <div class="container">
+          <div class="section-heading split">
+            <div>
+              <p class="section-kicker">Metodo</p>
+              <h2 id="process-title">Dal problema business al sistema in produzione.</h2>
+            </div>
+            <p>Un processo semplice da vendere su marketplace: scope chiaro, demo rapida, consegna misurabile.</p>
+          </div>
+          <ol class="process-list">
+            <li>
+              <span>01</span>
+              <strong>Analisi del flusso</strong>
+              <p>Capisco il processo, le eccezioni, gli strumenti gia usati e il risultato operativo atteso.</p>
+            </li>
+            <li>
+              <span>02</span>
+              <strong>Prototipo verificabile</strong>
+              <p>Creo una demo breve con dati fittizi o controllati, cosi il cliente vede subito il valore.</p>
+            </li>
+            <li>
+              <span>03</span>
+              <strong>Integrazione reale</strong>
+              <p>Collego API, CRM, database, documenti e canali come WhatsApp, email o form web.</p>
+            </li>
+            <li>
+              <span>04</span>
+              <strong>Deploy e passaggio consegne</strong>
+              <p>Metto online, documento le variabili critiche e preparo una demo video o walkthrough.</p>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="contact-section" id="contatti">
+        <div class="container contact-layout">
+          <div>
+            <p class="section-kicker">Disponibile per progetti freelance</p>
+            <h2>Hai un processo manuale da automatizzare o un'integrazione AI da rendere affidabile?</h2>
+            <p>
+              Posso aiutarti a trasformare form, CRM, documenti e API in un flusso operativo con log, controlli,
+              fallback e documentazione chiara.
+            </p>
+          </div>
+          <div class="contact-actions">
+            <a class="button button-primary" href="mailto:luigidev2018@gmail.com?subject=Richiesta%20automazione%20AI">Scrivimi una richiesta</a>
+            <a class="button button-secondary" href="https://github.com/LuigiScorzelli" target="_blank" rel="noreferrer">
+              GitHub
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <span>© <span data-year></span> Luigi Scorzelli</span>
+        <span>Salerno, Italia · Italiano madrelingua · Inglese C1</span>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
