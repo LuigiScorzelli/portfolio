@@ -1,0 +1,30 @@
+# Luigi Scorzelli — AI Automation Engineer
+
+> Freelance AI Automation Engineer con base a Salerno, Italia. Costruisco automazioni AI production-ready per PMI, agenzie, e-commerce e studi professionali: workflow n8n, integrazioni CRM (HubSpot), agenti conversazionali con RAG, estrazione dati da documenti. Ogni sistema include gestione errori, deduplica, retry, audit log e fallback umano — non solo la demo, ma il comportamento nei casi limite.
+
+Lingue: italiano (madrelingua), inglese (C1). Disponibile per progetti remoti.
+
+## Servizi
+
+- AI agents e chatbot collegati al business: assistenti su WhatsApp o widget web, risposte vincolate alla knowledge base del cliente (RAG), qualifica lead, scrittura su CRM, handoff umano per richieste critiche.
+- Workflow n8n, CRM e integrazioni API: automazioni end-to-end tra form, HubSpot, Google Sheets, email e API esterne; lead capture, deduplica, follow-up automatici.
+- Document AI e data extraction: estrazione dati strutturati da fatture, ordini e PDF verso gestionale, CRM o fogli, con validazione, confidence score e review manuale per i casi ambigui.
+
+## Case study
+
+- [Assistente WhatsApp AI con RAG per studio dentistico](https://luigiscorzelli.com/case-study-whatsapp-rag.html): risposte 24/7 dalla knowledge base via WhatsApp e widget web, memoria conversazionale, handoff a operatore. Stack: n8n, GPT-4o-mini, PostgreSQL + pgvector, WhatsApp Business API.
+- [Lead qualification AI con HubSpot](https://luigiscorzelli.com/case-study-whatsapp-rag.html#soluzione): dal form web al contatto qualificato nel CRM in meno di 30 secondi, con deduplica, retry e review manuale. Stack: n8n, OpenAI, HubSpot CRM API.
+- [AI Sales Chat per e-commerce](https://luigiscorzelli.com/case-study-ai-sales-chat-hubspot.html): advisor prodotto vincolato al catalogo, input vocale, qualifica intento e lead su HubSpot con consenso privacy. Stack: JavaScript, Web Speech API, n8n, OpenAI, HubSpot.
+- [Booking automation per hospitality](https://luigiscorzelli.com/case-study-hospitality-booking-automation.html): richieste di soggiorno verificate su disponibilita e prezzo, trasformate in contatto, deal e follow-up nel CRM con email di conferma. 9/9 test automatici, 25 casi limite documentati. Stack: JavaScript booking engine, n8n, OpenAI, HubSpot, Resend.
+
+## Approccio
+
+Processo in 4 step: analisi del processo esistente, prototipo demo, integrazione dei sistemi reali con error handling e sicurezza, consegna con documentazione e video walkthrough. I case study usano clienti fittizi dichiarati e dati demo.
+
+## Contatti
+
+- Sito: https://luigiscorzelli.com/
+- Email: luigidev2018@gmail.com
+- Upwork: https://www.upwork.com/freelancers/~01224cef3db4d24d45
+- LinkedIn: https://www.linkedin.com/in/luigi-scorzelli/
+- GitHub: https://github.com/LuigiScorzelli

@@ -25,3 +25,58 @@ nav?.addEventListener("click", (event) => {
     menuToggle?.setAttribute("aria-label", isEn ? "Open menu" : "Apri menu");
   }
 });
+
+const contactForm = document.querySelector(".contact-form");
+const formStatus = document.querySelector("[data-form-status]");
+
+contactForm?.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const button = contactForm.querySelector("button[type=submit]");
+  const originalLabel = button?.textContent;
+
+  if (button) {
+    button.disabled = true;
+    button.textContent = isEn ? "Sending…" : "Invio…";
+  }
+  if (formStatus) {
+    formStatus.className = "form-status";
+    formStatus.textContent = "";
+  }
+
+  try {
+    const payload = Object.fromEntries(new FormData(contactForm).entries());
+    const response = await fetch(contactForm.action, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+    const data = await response.json();
+
+    if (response.ok && data.success) {
+      contactForm.reset();
+      if (formStatus) {
+        formStatus.classList.add("is-success");
+        formStatus.textContent = isEn
+          ? "Thanks! I'll get back to you soon."
+          : "Grazie! Ti rispondo a breve.";
+      }
+    } else {
+      throw new Error(data.message || "Request failed");
+    }
+  } catch (error) {
+    if (formStatus) {
+      formStatus.classList.add("is-error");
+      formStatus.textContent = isEn
+        ? "Something went wrong. Please email me directly."
+        : "Qualcosa è andato storto. Scrivimi direttamente via email.";
+    }
+  } finally {
+    if (button) {
+      button.disabled = false;
+      button.textContent = originalLabel;
+    }
+  }
+});
