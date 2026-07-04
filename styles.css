@@ -627,10 +627,34 @@ a { color: inherit; }
 }
 
 .offer-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
   margin-top: 22px;
+  padding: 9px 14px;
+  border-radius: 8px;
+  background: rgba(11, 122, 94, 0.09);
+  border: 1px solid rgba(11, 122, 94, 0.28);
   font-family: var(--font-mono);
   font-size: 0.82rem;
-  color: var(--muted);
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--accent);
+}
+
+.offer-note-check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.7rem;
+  line-height: 1;
 }
 
 /* ── About ── */
@@ -922,7 +946,9 @@ a { color: inherit; }
   background: var(--ink-soft);
 }
 
-.stack-groups-dark p { color: rgba(255, 255, 255, 0.68); }
+.stack-groups-dark h3 { color: var(--accent-bright); }
+
+.stack-groups-dark p { color: rgba(255, 255, 255, 0.92); }
 
 /* ── Stack ── */
 .stack-layout {
