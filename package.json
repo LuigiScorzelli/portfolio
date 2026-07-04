@@ -5,6 +5,8 @@
   "type": "module",
   "description": "Portfolio landing page — Luigi Scorzelli",
   "dependencies": {
-    "resend": "^6.0.0"
+    "ai": "^7.0.14",
+    "resend": "^6.0.0",
+    "zod": "^4.4.3"
   }
 }
