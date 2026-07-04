@@ -39,10 +39,15 @@ const MAX_MESSAGES = 20; // conversation length cap
 const MAX_CHARS = 2000; // per-message input cap
 
 function systemPrompt(lang) {
+  // Language is a hard, top-priority directive: the rest of this prompt and the
+  // knowledge base are in Italian, so on the EN page we must state, forcefully
+  // and first, that the reply language is English regardless of that context.
   const langLine =
     lang === "en"
-      ? "Reply in English."
-      : "Rispondi in italiano.";
+      ? `## LANGUAGE (highest priority)
+You MUST write every reply in ENGLISH. This overrides everything else. Even though your instructions and the knowledge base below are written in Italian, and even if the visitor writes to you in Italian, you always answer in English. Never refuse to answer in English and never switch to Italian.`
+      : `## LINGUA (priorità massima)
+Rispondi SEMPRE in italiano.`;
   return `Sei l'assistente virtuale di Luigi Scorzelli, AI Automation Engineer freelance. Aiuti i visitatori del suo sito a capire i suoi servizi e, quando c'è interesse reale, li metti in contatto con Luigi.
 
 ${langLine}
