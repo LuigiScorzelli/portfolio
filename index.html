@@ -494,15 +494,15 @@
 
             <div class="form-field">
               <label for="cf-name">Nome</label>
-              <input type="text" id="cf-name" name="name" required autocomplete="name" placeholder="Il tuo nome">
+              <input type="text" id="cf-name" name="name" required minlength="2" maxlength="100" autocomplete="name" placeholder="Il tuo nome">
             </div>
             <div class="form-field">
               <label for="cf-email">Email</label>
-              <input type="email" id="cf-email" name="email" required autocomplete="email" placeholder="tua@email.com">
+              <input type="email" id="cf-email" name="email" required maxlength="254" autocomplete="email" placeholder="tua@email.com">
             </div>
             <div class="form-field">
               <label for="cf-message">Cosa vuoi automatizzare?</label>
-              <textarea id="cf-message" name="message" rows="4" required placeholder="Descrivi il processo o il problema che vuoi risolvere"></textarea>
+              <textarea id="cf-message" name="message" rows="4" required minlength="10" maxlength="5000" placeholder="Descrivi il processo o il problema che vuoi risolvere"></textarea>
             </div>
             <button type="submit" class="button button-primary">Invia richiesta</button>
             <p class="form-status" data-form-status role="status" aria-live="polite"></p>
