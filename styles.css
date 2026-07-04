@@ -596,6 +596,43 @@ a { color: inherit; }
   font-size: 0.95rem;
 }
 
+/* ── Offer ── */
+.offer-grid article {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.offer-badge {
+  position: absolute;
+  top: 26px;
+  right: 24px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: rgba(11, 122, 94, 0.08);
+  border: 1px solid rgba(11, 122, 94, 0.22);
+  border-radius: 999px;
+  padding: 4px 10px;
+}
+
+.offer-card p { flex: 1; }
+
+.offer-cta {
+  align-self: flex-start;
+  margin-top: 22px;
+}
+
+.offer-note {
+  margin-top: 22px;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
 /* ── About ── */
 .about-section { background: var(--paper); }
 
