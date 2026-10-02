@@ -28,6 +28,8 @@ nav?.addEventListener("click", (event) => {
 
 const contactForm = document.querySelector(".contact-form");
 const formStatus = document.querySelector("[data-form-status]");
+// Time trap: the API rejects submits sent too soon after page load.
+const pageLoadedAt = Date.now();
 
 contactForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -45,6 +47,7 @@ contactForm?.addEventListener("submit", async (event) => {
 
   try {
     const payload = Object.fromEntries(new FormData(contactForm).entries());
+    payload.elapsed = Date.now() - pageLoadedAt;
     const response = await fetch(contactForm.action, {
       method: "POST",
       headers: {
@@ -74,6 +77,8 @@ contactForm?.addEventListener("submit", async (event) => {
         : "Qualcosa è andato storto. Scrivimi direttamente via email.";
     }
   } finally {
+    // Turnstile tokens are single-use: get a fresh one for the next submit.
+    window.turnstile?.reset();
     if (button) {
       button.disabled = false;
       button.textContent = originalLabel;

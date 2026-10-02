@@ -1313,3 +1313,5 @@ a { color: inherit; }
   .header-right { gap: 12px; }
   .availability-badge { display: none; }
 }
+
+.contact-form .cf-turnstile { min-height: 65px; }

@@ -525,7 +525,10 @@
             </p>
           </div>
           <form class="contact-form" action="/api/contact" method="POST">
-            <input type="checkbox" name="botcheck" class="contact-honeypot" tabindex="-1" autocomplete="off">
+            <div class="contact-honeypot" aria-hidden="true">
+              <label for="cf-website">Leave this field empty</label>
+              <input type="text" id="cf-website" name="website" tabindex="-1" autocomplete="off">
+            </div>
 
             <div class="form-field">
               <label for="cf-name">Name</label>
@@ -539,6 +542,7 @@
               <label for="cf-message">What do you want to automate?</label>
               <textarea id="cf-message" name="message" rows="4" required minlength="10" maxlength="5000" placeholder="Describe the process or problem you want to solve"></textarea>
             </div>
+            <div class="cf-turnstile" data-sitekey="0x4AAAAAAFLwWuI3TL2rh0FI" data-action="contact" data-language="en" data-size="flexible"></div>
             <button type="submit" class="button button-primary">Send request</button>
             <p class="form-status" data-form-status role="status" aria-live="polite"></p>
           </form>
@@ -560,6 +564,7 @@
       </div>
     </footer>
 
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     <script src="script.js"></script>
     <script src="assets/chat-widget.js" defer></script>
   </body>

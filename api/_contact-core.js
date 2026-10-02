@@ -9,11 +9,13 @@ import { Resend } from "resend";
 // CONTACT_TO_EMAIL      — where you receive the notification
 // CONTACT_FROM_EMAIL    — verified sender. Placeholder: onboarding@resend.dev (test only)
 // HUBSPOT_TOKEN         — Private App token, scope: crm.objects.contacts.write
+// TURNSTILE_SECRET_KEY  — Cloudflare Turnstile secret (anti-bot). If unset, check is skipped.
 const {
   RESEND_API_KEY,
   CONTACT_TO_EMAIL = "luigi.scorzelli87@gmail.com",
   CONTACT_FROM_EMAIL = "onboarding@resend.dev",
   HUBSPOT_TOKEN,
+  TURNSTILE_SECRET_KEY,
 } = process.env;
 
 const resend = RESEND_API_KEY ? new Resend(RESEND_API_KEY) : null;
@@ -67,6 +69,58 @@ export function createRateLimiter({ max, windowMs }) {
   };
 }
 
+// ── Cloudflare Turnstile ──────────────────────────────────────────
+// Verifies the token the widget injects into the form (`cf-turnstile-response`).
+// Returns true when valid, or when no secret is configured (feature off).
+// TURNSTILE_HOSTNAMES (comma-separated) overrides the production hostnames,
+// e.g. "localhost" for local testing — never add localhost in production.
+const TURNSTILE_HOSTS = new Set(
+  (process.env.TURNSTILE_HOSTNAMES || "luigiscorzelli.com,www.luigiscorzelli.com")
+    .split(",")
+    .map((h) => h.trim())
+    .filter(Boolean)
+);
+
+export async function verifyTurnstile(token, ip, expectedAction) {
+  if (!TURNSTILE_SECRET_KEY) return true;
+  if (typeof token !== "string" || !token || token.length > 2048) return false;
+  try {
+    const res = await fetch(
+      "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          secret: TURNSTILE_SECRET_KEY,
+          response: token,
+          remoteip: ip && ip !== "unknown" ? ip : undefined,
+        }),
+      }
+    );
+    const data = await res.json();
+    if (data.success !== true) {
+      console.warn("Turnstile rejected:", data["error-codes"]);
+      return false;
+    }
+    // A valid token minted for another form (action) or another site
+    // (hostname) must not unlock this endpoint.
+    if (expectedAction && data.action !== expectedAction) {
+      console.warn("Turnstile action mismatch:", data.action);
+      return false;
+    }
+    if (!TURNSTILE_HOSTS.has(data.hostname)) {
+      console.warn("Turnstile hostname mismatch:", data.hostname);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    // Fail closed: if Cloudflare is unreachable we'd rather lose a submit
+    // (the user sees the "email me directly" fallback) than let bots through.
+    console.error("Turnstile verify error:", err.message);
+    return false;
+  }
+}
+
 // Strip CR/LF and other control chars — prevents email header injection when a
 // user-supplied value (e.g. the name) is placed into a header like the subject.
 export const stripControlChars = (s = "") =>
@@ -93,6 +147,10 @@ export function validateContact({ name, email, message }) {
 
   if (cleanName.length < 2 || cleanName.length > 100) {
     return { ok: false, message: "Il nome deve avere tra 2 e 100 caratteri" };
+  }
+  // A real name never contains a link — bots use it to smuggle spam URLs.
+  if (countUrls(cleanName) > 0 || /\.[a-z]{2,}\//i.test(cleanName)) {
+    return { ok: false, message: "Nome non valido" };
   }
   if (cleanEmail.length > 254 || /\s/.test(cleanEmail) || !EMAIL_RE.test(cleanEmail)) {
     return { ok: false, message: "Email non valida" };
@@ -188,20 +246,25 @@ export async function submitContact({ name, email, message, source = "form" }) {
     return { ok: false, message: "Email delivery failed" };
   }
 
-  // 3. Confirmation to the lead — best-effort: don't fail if this bounces
-  const confirm = await resend.emails.send({
-    from: `Luigi Scorzelli <${CONTACT_FROM_EMAIL}>`,
-    to: email,
-    subject: "Ho ricevuto la tua richiesta",
-    html: `
-      <p>Ciao ${escapeHtml(name.split(/\s+/)[0])},</p>
-      <p>grazie per avermi scritto. Ho ricevuto la tua richiesta e ti rispondo a breve, di solito entro 1 giorno lavorativo.</p>
-      <p>A presto,<br>Luigi Scorzelli</p>
-    `,
-  });
+  // 3. Confirmation to the lead — best-effort: don't fail if this bounces.
+  // Anti-relay: the email address is unverified, so a bot can point it at any
+  // victim. The confirmation therefore carries NO user-supplied content, and
+  // is skipped entirely when the message contains links (typical spam).
+  if (countUrls(message) === 0) {
+    const confirm = await resend.emails.send({
+      from: `Luigi Scorzelli <${CONTACT_FROM_EMAIL}>`,
+      to: email,
+      subject: "Ho ricevuto la tua richiesta",
+      html: `
+        <p>Ciao,</p>
+        <p>grazie per avermi scritto. Ho ricevuto la tua richiesta e ti rispondo a breve, di solito entro 1 giorno lavorativo.</p>
+        <p>A presto,<br>Luigi Scorzelli</p>
+      `,
+    });
 
-  if (confirm.error) {
-    console.error("Resend confirmation error:", confirm.error);
+    if (confirm.error) {
+      console.error("Resend confirmation error:", confirm.error);
+    }
   }
 
   return { ok: true };
