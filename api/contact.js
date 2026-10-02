@@ -8,7 +8,11 @@ import {
   createRateLimiter,
   validateContact,
   submitContact,
+  verifyTurnstile,
 } from "./_contact-core.js";
+
+// Minimum time a human needs to fill the form.
+const MIN_FILL_MS = 3000;
 
 // Per-IP: 5 requests / 10 minutes.
 const isRateLimited = createRateLimiter({
@@ -46,10 +50,33 @@ export default async function handler(req, res) {
     return res.status(400).json({ success: false, message: "Invalid input" });
   }
 
-  const { name = "", email = "", message = "", botcheck } = body;
+  const {
+    name = "",
+    email = "",
+    message = "",
+    botcheck,
+    website,
+    elapsed,
+    "cf-turnstile-response": turnstileToken,
+  } = body;
 
-  // Honeypot: real users leave it empty
-  if (botcheck) return res.status(200).json({ success: true });
+  // Honeypots: real users never see these fields, so they stay empty.
+  // Fake success so bots don't learn they were caught.
+  if (botcheck || website) return res.status(200).json({ success: true });
+
+  // Time trap: script.js sends ms since page load. Missing (direct API call)
+  // or too fast (< 3s to fill name, email and message) → bot.
+  const elapsedMs = Number(elapsed);
+  if (!Number.isFinite(elapsedMs) || elapsedMs < MIN_FILL_MS) {
+    return res.status(200).json({ success: true });
+  }
+
+  if (!(await verifyTurnstile(turnstileToken, getClientIp(req), "contact"))) {
+    return res.status(403).json({
+      success: false,
+      message: "Verifica anti-bot non riuscita, ricarica la pagina e riprova",
+    });
+  }
 
   const valid = validateContact({ name, email, message });
   if (!valid.ok) {

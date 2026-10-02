@@ -14,12 +14,17 @@ Le API key restano server-side, mai esposte nel frontend.
 | Variabile            | Obbligatoria | Descrizione                                                                 |
 | -------------------- | ------------ | -------------------------------------------------------------------------- |
 | `RESEND_API_KEY`     | Sì           | API key da https://resend.com/api-keys                                     |
-| `CONTACT_TO_EMAIL`   | No           | Dove ricevi la notifica. Default: `luigidev2018@gmail.com`                 |
+| `CONTACT_TO_EMAIL`   | No           | Dove ricevi la notifica. Default nel codice: `luigi.scorzelli87@gmail.com`; impostare esplicitamente la casella desiderata nel deployment                 |
 | `CONTACT_FROM_EMAIL` | No           | Mittente verificato. Default test: `onboarding@resend.dev`                 |
 | `HUBSPOT_TOKEN`      | No¹          | Token della Private App HubSpot (scope `crm.objects.contacts.write`)       |
+| `TURNSTILE_SECRET_KEY` | No²       | Secret key di Cloudflare Turnstile (anti-bot). Vedi sezione 3b             |
+| `TURNSTILE_HOSTNAMES`  | No        | Hostname ammessi (virgola). Default: `luigiscorzelli.com,www.luigiscorzelli.com` |
 
 ¹ Se `HUBSPOT_TOKEN` non è impostata, il form funziona comunque: salta HubSpot
 e invia solo le email. Utile per partire subito.
+
+² Se `TURNSTILE_SECRET_KEY` non è impostata, la verifica Turnstile viene saltata
+(restano attivi honeypot e controllo sul tempo di compilazione).
 
 ## 2. Resend
 
@@ -36,6 +41,19 @@ e invia solo le email. Utile per partire subito.
 3. Copia l'access token → `HUBSPOT_TOKEN`.
 4. La property `message` deve esistere sul contatto: HubSpot ne ha una di
    default; se hai rimosso quella, creane una custom con nome interno `message`.
+
+## 3b. Cloudflare Turnstile (anti-bot)
+
+1. https://dash.cloudflare.com → **Turnstile** → Add widget.
+2. Hostname: `luigiscorzelli.com` (aggiungi anche `localhost` per i test).
+   Modalità consigliata: **Managed**.
+3. La **Site Key** è già in `index.html` ed `en.html` (`data-sitekey`), con
+   `data-action="contact"` che il server verifica.
+4. Copia la **Secret Key** → `TURNSTILE_SECRET_KEY` su Vercel (Production), poi redeploy.
+
+Il server accetta solo token con action `contact` e hostname in
+`TURNSTILE_HOSTNAMES`. Per test locali imposta `TURNSTILE_HOSTNAMES=localhost`
+solo in locale, mai in produzione.
 
 ## 4. Deploy
 
