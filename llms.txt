@@ -19,12 +19,15 @@ Lingue: italiano (madrelingua), inglese (C1). Disponibile per progetti remoti.
 
 ## Approccio
 
-Processo in 4 step: analisi del processo esistente, prototipo demo, integrazione dei sistemi reali con error handling e sicurezza, consegna con documentazione e video walkthrough. I case study usano clienti fittizi dichiarati e dati demo.
+Processo in 4 step: analisi del processo esistente, prototipo demo, integrazione dei sistemi reali con error handling e sicurezza, consegna con documentazione e video walkthrough. I 4 progetti mostrati sul sito sono progetti dimostrativi: usano clienti fittizi dichiarati e dati di esempio.
+
+Primo contatto: call conoscitiva gratuita di 30 minuti, prenotabile online.
 
 ## Contatti
 
 - Sito: https://luigiscorzelli.com/
-- Email: luigidev2018@gmail.com
+- Prenota una call conoscitiva gratuita di 30 minuti: https://calendly.com/luigi-scorzelli/30min
+- Email: luigiscorzelli@aiframe.it
 - Upwork: https://www.upwork.com/freelancers/~01224cef3db4d24d45
 - LinkedIn: https://www.linkedin.com/in/luigi-scorzelli/
 - GitHub: https://github.com/LuigiScorzelli

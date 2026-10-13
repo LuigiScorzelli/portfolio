@@ -26,6 +26,16 @@ nav?.addEventListener("click", (event) => {
   }
 });
 
+// Plausible custom events: any element with data-track="event_name"
+// (optional data-track-pos for where on the page it was clicked).
+const track = (name, props) => window.plausible?.(name, props ? { props } : undefined);
+
+document.addEventListener("click", (event) => {
+  const el = event.target.closest("[data-track]");
+  if (!el) return;
+  track(el.dataset.track, el.dataset.trackPos ? { posizione: el.dataset.trackPos } : undefined);
+});
+
 const contactForm = document.querySelector(".contact-form");
 const formStatus = document.querySelector("[data-form-status]");
 // Time trap: the API rejects submits sent too soon after page load.
@@ -59,6 +69,7 @@ contactForm?.addEventListener("submit", async (event) => {
     const data = await response.json();
 
     if (response.ok && data.success) {
+      track("contact_submit");
       contactForm.reset();
       if (formStatus) {
         formStatus.classList.add("is-success");
