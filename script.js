@@ -26,9 +26,9 @@ nav?.addEventListener("click", (event) => {
   }
 });
 
-// Plausible custom events: any element with data-track="event_name"
+// Umami custom events: any element with data-track="event_name"
 // (optional data-track-pos for where on the page it was clicked).
-const track = (name, props) => window.plausible?.(name, props ? { props } : undefined);
+const track = (name, props) => window.umami?.track(name, props);
 
 document.addEventListener("click", (event) => {
   const el = event.target.closest("[data-track]");

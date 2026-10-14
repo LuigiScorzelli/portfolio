@@ -17,7 +17,7 @@ Obiettivo: mettere online il nuovo sito (homepage, `/check-up`, `/visibilita-ai`
 - **Rilascio 1 (5/11, MVP per l'outbound):** correzioni rapide, fondamenta Astro, `/visibilita-ai` con audit funzionante, `/agenzie`, `/privacy`.
 - **Rilascio 2 (27/11):** check-up, nuova homepage, sequenze email, video.
 
-**Condizione di "fatto" complessiva:** un visitatore può fare il check-up o l'audit, vede subito il risultato, se lascia l'email riceve il report PDF, il contatto compare in HubSpot con le proprietà giuste, Luigi riceve l'avviso per i lead caldi, e ogni passaggio è misurato in Plausible.
+**Condizione di "fatto" complessiva:** un visitatore può fare il check-up o l'audit, vede subito il risultato, se lascia l'email riceve il report PDF, il contatto compare in HubSpot con le proprietà giuste, Luigi riceve l'avviso per i lead caldi, e ogni passaggio è misurato in Umami.
 
 ---
 
@@ -34,6 +34,7 @@ Obiettivo: mettere online il nuovo sito (homepage, `/check-up`, `/visibilita-ai`
 | Dipendenze | `ai`, `resend`, `zod` |
 | Variabili d'ambiente in uso | `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, `CONTACT_FROM_EMAIL`, `HUBSPOT_TOKEN`, `TURNSTILE_SECRET_KEY`, `TURNSTILE_HOSTNAMES`, `CHAT_MODEL` |
 | SEO/GEO | `robots.txt`, `sitemap.xml`, `llms.txt`, JSON-LD Person/WebSite/FAQPage |
+| VPS n8n (verificata e messa in sicurezza il 13/10) | Hetzner `portfolio-vps`, progetto "Portfolio": CX23 (2 vCPU, 4 GB RAM, 40 GB disco), Falkenstein, IP `167.233.196.196`, Ubuntu 26.04 LTS. Container (compose in `/opt/portfolio/progetto-1-whatsapp-rag/`): `nginx:alpine` (reverse proxy, porte 80/443), `n8nio/n8n:2.27.3` (database SQLite, nessun Postgres), `certbot` (rinnovo ogni 12 h). Dominio n8n: `studidentisticorossi.duckdns.org` (certificato Let's Encrypt valido fino al 21/11/2026). Dopo il riavvio: 3,1 GB di RAM disponibili, 28 GB di disco liberi |
 | Problemi noti | email `luigidev2018@gmail.com` ovunque (anche in JSON-LD e `llms.txt`), call da 15 min, titolo "5 case study" con 4 schede visibili (3 con pagina dedicata + "Estrazione dati da PDF" senza pagina), nessuna misurazione, case study non dichiarati dimostrativi in homepage |
 | File non tracciati | `CHATBOT-TEST.md`, `demo-visibili-piano-implementazione.md`, `strategie-trader-dev/` (da decidere se tenerli fuori dal repo) |
 | File tracciati e pubblicati per errore | `design_handoff_portfolio/` (contiene anche la vecchia email e una vecchia versione del sito): non esiste `.vercelignore`, quindi viene servita in produzione |
@@ -42,7 +43,7 @@ Obiettivo: mettere online il nuovo sito (homepage, `/check-up`, `/visibilita-ai`
 
 ## 1. Decisioni da prendere prima di iniziare
 
-Bloccano il lavoro: vanno chiuse nella Fase 0. Al 13/10 sono tutte chiuse.
+Bloccano il lavoro: vanno chiuse nella Fase 0. Al 14/10 sono tutte chiuse.
 
 | # | Decisione | Proposta | Blocca |
 | --- | --- | --- | --- |
@@ -54,13 +55,33 @@ Bloccano il lavoro: vanno chiuse nella Fase 0. Al 13/10 sono tutte chiuse.
 | D6 | Mittente dei report | ✅ **Deciso:** Resend (già integrato) con dominio verificato `aiframe.it` o sottodominio `mail.aiframe.it` | Fase 3 |
 | D7 | Sequenze email dopo i lead magnet | ✅ **Deciso:** Brevo free per le sequenze (gestisce disiscrizioni), Resend solo per le email transazionali | Fase 7 |
 | D8 | Generatore PDF | ✅ **Deciso:** Gotenberg in Docker sulla VPS di n8n (gratuito, nessun dato a terzi) | Fase 3 |
-| D9 | Dove gira n8n in produzione | ✅ **Deciso: VPS esistente.** Da verificare: almeno 1 GB di RAM libera per Gotenberg, HTTPS, backup giornaliero del database di n8n, aggiornamenti automatici di sicurezza | Fase 3 |
+| D9 | Dove gira n8n in produzione | ✅ **Deciso e verificato (13/10): VPS esistente** (`portfolio-vps`, sezione 0). RAM disponibile 3,1 GB + swap 2 GB (Gotenberg ~1 GB ci sta); HTTPS con Nginx + Certbot; backup giornalieri Hetzner attivi (7 copie, coprono anche il file SQLite di n8n); aggiornamenti automatici di sicurezza attivi. Dettaglio degli interventi sotto la tabella | Fase 3 |
 | D10 | Versione inglese | ✅ **Deciso:** congelata (solo correzioni rapide), da rifare dopo la validazione dell'ICP. Dal nuovo sito il link EN punta alle vecchie pagine | Fase 2 |
 | D11 | Tracker visitatori di Apollo | ✅ **Deciso:** rinviato, da valutare con l'esperto privacy (A01) | Fase 8 |
 | D12 | Hosting video | ✅ **Deciso:** clip muta della homepage in MP4 sul sito; video lunghi (V2, V3) su YouTube "non in elenco" con caricamento al clic (nessun cookie prima del clic) | Immagini e video |
 | D13 | Salvataggio dati per rate limit, audit già calcolati e coda di recupero | ✅ **Deciso (13/10): Upstash Redis** dal Marketplace Vercel (piano gratuito, variabili d'ambiente iniettate in automatico). Scartata: tabella nel Postgres di n8n, perché rate limit e coda dipenderebbero da n8n, che è proprio il caso da coprire | Fase 3 |
 | D14 | Prenotazione call | ✅ **Deciso: Calendly**, evento da 30 minuti: `https://calendly.com/luigi-scorzelli/30min` (sostituisce Cal.com) | Fase 1 |
 | D15 | Controllo PageSpeed nel punteggio dell'audit | ✅ **Deciso (13/10): fuori dal punteggio.** Il punteggio (0–100) usa solo i controlli fatti subito, quindi a schermo e nel PDF è lo stesso numero; la velocità compare nel report come sezione a parte, senza punti. Alternativa scartata: mostrare "X/95" a schermo e "Y/100" nel PDF | Fase 3 |
+| D16 | Strumento di statistiche | ✅ **Deciso (14/10): Umami Cloud, piano Hobby gratuito** (100.000 eventi/mese, 6 mesi di storico, eventi con proprietà e funnel inclusi), regione EU. Sito "Portfoglio", Website ID `a8ce1cae-353e-4bad-b60c-63a411c5de15`, script `https://cloud.umami.is/script.js` con `data-domains` limitato a `luigiscorzelli.com` e `www.luigiscorzelli.com` (anteprime e localhost non vengono contati). Gli eventi non vanno creati nel pannello: compaiono da soli in Events. Scartati: Plausible Cloud (a pagamento dopo la prova, proprietà solo nel piano da $19) e Umami sulla VPS (lavoro e manutenzione; resta possibile in futuro). Il tracker visitatori di Apollo non sostituisce lo strumento di statistiche (vedi D11) | Fase 1 |
+
+### VPS: interventi del 13/10 (D9)
+
+Fatti sulla VPS `portfolio-vps` dopo un backup manuale:
+
+1. **Backup giornalieri Hetzner attivati** (20% del piano, circa 1,60/mese, 7 copie a rotazione) + backup manuale prima delle modifiche.
+2. **Firewall Hetzner `portfolio-vps-web`**: in ingresso solo TCP 22, 80, 443 e ICMP; uscita libera. Prima dell'applicazione rispondevano già solo 22/80/443 (la 5678 di n8n non è esposta).
+3. **Compose** (`/opt/portfolio/progetto-1-whatsapp-rag/docker-compose.yml`, copia in `docker-compose.yml.bak-2026-10-13`): n8n fissato a `n8nio/n8n:2.27.3` invece di `latest`; `restart: unless-stopped` aggiunto a Certbot (prima `no`).
+4. **Swap da 2 GB** (`/swapfile`, in `/etc/fstab`, `vm.swappiness=10`).
+5. **Aggiornamenti**: installati i 49 pacchetti in sospeso, `unattended-upgrades` attivo (aggiornamenti di sicurezza giornalieri, senza riavvio automatico), riavvio eseguito: i 3 container ripartono da soli.
+6. **Cron di root** `0 4 * * * docker exec progetto-1-whatsapp-rag-nginx-1 nginx -s reload`: senza, Nginx avrebbe continuato a servire il certificato scaduto dopo il rinnovo di Certbot.
+
+Da tenere presente per le fasi successive:
+
+- **Dominio di n8n:** oggi è quello della demo (`studidentisticorossi.duckdns.org`). Per i webhook del sito (Fase 3) conviene un sottodominio proprio, es. `n8n.aiframe.it`, con un nuovo `server_name` e certificato in Nginx.
+- **Nuovi servizi** (Gotenberg, eventuale Umami) vanno aggiunti dietro lo stesso Nginx; i certificati si ottengono con il container Certbot esistente (webroot `/.well-known/acme-challenge/`).
+- **Riavvii:** gli aggiornamenti automatici non riavviano il server; quando compare "System restart required", riavviare a mano dopo aver controllato che l'ultimo backup sia recente.
+- **Verifica del 14/10:** tutti gli interventi sopra confermati via SSH; backup giornalieri e firewall `portfolio-vps-web` confermati dalla console. Umami **non** è installato sulla VPS (D16 usa Umami Cloud). Il container n8n porta ancora l'etichetta `n8nio/n8n:latest` perché non è stato ricreato dopo la modifica al compose, ma la versione in esecuzione è già la 2.27.3: si allinea al prossimo `docker compose up -d`. La copia `docker-compose.yml.bak-2026-10-13` contiene già la 2.27.3 (differisce solo per `restart` di Certbot).
+- **Accesso SSH:** chiave `~/.ssh/id_ed25519` del Mac di Luigi (con passphrase, salvata nel Portachiavi).
 
 ### Garanzia (D2): testo e regole operative
 
@@ -151,7 +172,7 @@ landingpage/
 │   ├── _lib/                # checkup-score.js, audit-checks.js, ssrf-guard.js, n8n-client.js, store.js (Redis)
 │   └── _data/llms.txt       # copia letta da chat.js (generata in build da public/llms.txt)
 ├── src/
-│   ├── layouts/Base.astro   # head, meta, JSON-LD, header, footer, Plausible
+│   ├── layouts/Base.astro   # head, meta, JSON-LD, header, footer, Umami
 │   ├── components/          # Header, Footer, Calculator, Timeline, DemoCard,
 │   │                        # Pricing, Objections, BookCall (link Calendly), VideoFacade, ToolsStrip
 │   ├── pages/
@@ -194,9 +215,11 @@ Le date presumono circa 4 ore al giorno sul progetto (la quota Freelance/Agenzia
 
 - [x] Chiudere D13 (Upstash Redis) e D15 (PageSpeed fuori dal punteggio), chiuse il 13/10.
 - [ ] Verificare l'evento Calendly `https://calendly.com/luigi-scorzelli/30min`: titolo "Analisi gratuita 30 min", domande del modulo (azienda, sito, processo da automatizzare), email di conferma, fuso orario Europe/Rome.
-- [ ] Creare o verificare gli account: Plausible, Brevo, Upstash Redis (dal Marketplace Vercel), chiave API PageSpeed Insights (Google Cloud).
+- [x] Chiudere D16: Umami Cloud (14/10).
+- [ ] Creare o verificare gli account: Brevo, Upstash Redis (dal Marketplace Vercel), chiave API PageSpeed Insights (Google Cloud).
 - [ ] DNS di `aiframe.it`: casella `luigiscorzelli@aiframe.it`, dominio verificato in Resend (SPF, DKIM, DMARC).
-- [ ] VPS di n8n (D9): verificare RAM libera ≥ 1 GB per Gotenberg, HTTPS, backup giornaliero, aggiornamenti di sicurezza.
+- [x] VPS di n8n (D9): verificata e messa in sicurezza il 13/10 (vedi "VPS: interventi del 13/10" nella sezione 1).
+- [ ] Attivare la 2FA sull'account Hetzner (segnalata dalla console come non attiva).
 - [ ] HubSpot: creare le proprietà personalizzate (sezione 4).
 - [ ] Ripulire il repository: decidere se `strategie-trader-dev/`, `CHATBOT-TEST.md` e `demo-visibili-piano-implementazione.md` vanno in `.gitignore` o spostati; creare `.vercelignore` per non pubblicare `design_handoff_portfolio/`, `strategie-trader-dev/` e i file `.md` interni.
 
@@ -212,13 +235,13 @@ Si fanno subito sul sito HTML esistente, prima della ricostruzione, perché l'ou
 | 2 | "Prenota la call" → `https://calendly.com/luigi-scorzelli/30min` (nuova scheda, con parametri UTM) | `index.html`, `en.html`, case study |
 | 3 | Call da 15 → 30 minuti | `index.html`, `en.html`, JSON-LD FAQ, `llms.txt` |
 | 4 | Titolo "5 case study" → "4 progetti dimostrativi" (le 4 schede visibili) e dicitura "progetto dimostrativo con dati di esempio" su ogni scheda e pagina | `index.html`, `en.html`, case study |
-| 5 | Plausible + eventi sui pulsanti principali | `index.html`, `en.html`, `script.js` |
+| 5 | Umami + eventi sui pulsanti principali | `index.html`, `en.html`, `script.js` |
 | 6 | Allineare `llms.txt` (email, link Calendly, call da 30 minuti, dimostrativi) perché il chatbot legge da lì | `llms.txt` |
 | 7 | `.vercelignore` per togliere dalla produzione `design_handoff_portfolio/` e i file interni | `.vercelignore` |
 
 Prima del rename dell'email: `grep -rn "luigidev2018" . --exclude-dir=node_modules --exclude-dir=.git` → lista completa → sostituzione in un solo passaggio → nuovo grep per verificare che non resti nulla (regola 6 di CLAUDE.md). Il grep del 13/10 trova anche `design_handoff_portfolio/Portfolio.dc.html` e `design_handoff_portfolio/_old_version/index.html`: vanno ripuliti oppure esclusi dalla pubblicazione con il punto 7.
 
-**Test:** il form contatti invia ancora (anteprima Vercel), il chatbot risponde con la nuova email e il link Calendly, ogni pulsante "Prenota" apre l'evento da 30 minuti, gli eventi compaiono in Plausible, `https://<anteprima>/design_handoff_portfolio/Portfolio.dc.html` risponde 404.
+**Test:** il form contatti invia ancora (anteprima Vercel), il chatbot risponde con la nuova email e il link Calendly, ogni pulsante "Prenota" apre l'evento da 30 minuti, gli eventi compaiono in Umami (sezione Events), `https://<anteprima>/design_handoff_portfolio/Portfolio.dc.html` risponde 404.
 **Fatto quando:** deploy in produzione e grep pulito.
 
 ### Fase 2 — Fondamenta del nuovo sito (21–23/10, ~3 giorni)
@@ -231,7 +254,7 @@ Prima del rename dell'email: `grep -rn "luigidev2018" . --exclude-dir=node_modul
   Se uno di questi fallisce, si torna a D1 e si resta in HTML puro.
 - [ ] Inizializzare Astro (output statico), spostare gli asset in `public/`, script di build che copia `public/llms.txt` in `api/_data/llms.txt`.
 - [ ] `tokens.css` dai valori del design: `#EFF1ED` base, `#11161B` testo e sezioni scure, `#2340E8` azioni, `#B33A12` perdite, `#0F6E4B` esiti positivi, font Bricolage Grotesque, Geist e Geist Mono (caricati in locale, non da Google, per privacy e velocità).
-- [ ] Componenti condivisi: `Base.astro` (meta, OG, JSON-LD, Plausible), `Header`, `Footer`, `BookCall` (link Calendly con UTM ed evento `cta_call`), `VideoFacade`.
+- [ ] Componenti condivisi: `Base.astro` (meta, OG, JSON-LD, Umami), `Header`, `Footer`, `BookCall` (link Calendly con UTM ed evento `cta_call`), `VideoFacade`.
 - [ ] Riportare il widget chatbot e il form contatti nel layout.
 - [ ] `vercel.json`: redirect 301 dai vecchi URL dei case study verso `/casi/...` (o mantenere gli stessi URL, che è più semplice); `includeFiles` per `chat.js`; `maxDuration` per `audit.js`.
 - [ ] Pagine EN e case study EN copiate in `public/` così come sono (D10).
@@ -273,7 +296,7 @@ Prima del check-up perché serve subito per l'outbound verso le web agency (ICP 
 ### Fase 4 — `/agenzie` e `/privacy` (2–3/11, ~2 giorni)
 
 - [ ] `/agenzie` (1 giorno): pagina dal design, con la tabella "chi fa cosa", prezzi (D4), offerta "5 audit gratuiti", link Calendly e copertina del video V3.
-- [ ] `/privacy` (1 giorno): serve **prima** di raccogliere email con l'audit. Finalità, base giuridica, conservazione, fornitori (Vercel, Upstash, n8n/VPS, HubSpot, Resend, Brevo, Google PageSpeed, provider LLM, Calendly, Plausible). **Da far rivedere all'esperto (A01)** prima del 5/11.
+- [ ] `/privacy` (1 giorno): serve **prima** di raccogliere email con l'audit. Finalità, base giuridica, conservazione, fornitori (Vercel, Upstash, n8n/VPS, HubSpot, Resend, Brevo, Google PageSpeed, provider LLM, Calendly, Umami). **Da far rivedere all'esperto (A01)** prima del 5/11.
 - [ ] Caselle di consenso separate e non preselezionate nel modulo dell'audit (report / comunicazioni commerciali).
 
 ### Fase 5 — Collaudo e lancio del Rilascio 1 (4–5/11, margine il 6/11)
@@ -367,7 +390,7 @@ Regole tecniche: MP4 H.264 con `poster`, `muted playsinline`, avvio solo quando 
 
 ---
 
-## 5. Misurazione (Plausible, eventi personalizzati)
+## 5. Misurazione (Umami, eventi personalizzati)
 
 | Evento | Quando | Obiettivo del piano (60 giorni) |
 | --- | --- | --- |
@@ -376,17 +399,17 @@ Regole tecniche: MP4 H.264 con `poster`, `muted playsinline`, avvio solo quando 
 | `checkup_email` | richiesta del PDF | completamento → email ≥ 60% |
 | `audit_submit` / `audit_result` / `audit_email` | audit | avvio → completamento ≥ 70% |
 | `cta_call` | clic su "Prenota" | — |
-| `call_booked` | prenotazione su Calendly: pagina di conferma con redirect a `/grazie-call` (evento Plausible), oppure webhook di Calendly verso n8n → HubSpot (i webhook richiedono un piano Calendly a pagamento) | lead → call ≥ 5% |
+| `call_booked` | prenotazione su Calendly: pagina di conferma con redirect a `/grazie-call` (evento Umami), oppure webhook di Calendly verso n8n → HubSpot (i webhook richiedono un piano Calendly a pagamento) | lead → call ≥ 5% |
 | `video_play` | clic sulle facciate video | — |
 
-Più i parametri UTM su ogni link usato in LinkedIn e nell'outbound. Dashboard: una vista Plausible condivisa + una vista HubSpot "lead da strumenti" con fonte, strumento e punteggio.
+Più i parametri UTM su ogni link usato in LinkedIn e nell'outbound. Dashboard: una vista Umami condivisa (link di condivisione o Board) + una vista HubSpot "lead da strumenti" con fonte, strumento e punteggio.
 
 ---
 
 ## 6. Lista di controllo prima del lancio
 
 - [ ] Nessuna occorrenza di `luigidev2018` (grep).
-- [ ] Tutte le variabili d'ambiente nuove presenti su Vercel (Production e Preview): `N8N_WEBHOOK_URL`, `N8N_WEBHOOK_SECRET`, `PAGESPEED_API_KEY`, `PLAUSIBLE_DOMAIN`, `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`, `CALENDLY_URL`, oltre a quelle esistenti.
+- [ ] Tutte le variabili d'ambiente nuove presenti su Vercel (Production e Preview): `N8N_WEBHOOK_URL`, `N8N_WEBHOOK_SECRET`, `PAGESPEED_API_KEY`, `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`, `CALENDLY_URL`, oltre a quelle esistenti.
 - [ ] `design_handoff_portfolio/` e i file interni non raggiungibili in produzione (`.vercelignore`).
 - [ ] Il chatbot in produzione risponde con l'email nuova e il link Calendly (prova che legge `llms.txt` dalla nuova posizione).
 - [ ] `/api/_lib/...` risponde 404 (i moduli interni non sono endpoint).
