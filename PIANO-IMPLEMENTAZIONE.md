@@ -2,7 +2,7 @@
 title: "Piano di implementazione — restyling luigiscorzelli.com e lead magnet"
 status: bozza
 created: 2026-10-13
-updated: 2026-10-15 (Fase 2 dettagliata; giorno 1 completato: prova tecnica superata, D1 confermata)
+updated: 2026-10-15 (Fase 2: giorni 1–3 completati; resta il controllo finale sull'anteprima)
 fonti:
   - "~/Downloads/piano-acquisizione-lead-magnet.md (strategia, specifiche dei lead magnet)"
   - "Canvas di design: https://claude.ai/artifact/S85wx3BYHmU9ohuDBnRvSv"
@@ -287,9 +287,17 @@ Giorno 2, design di base:
 - **Da decidere:** il footer del design mostra la P.IVA. Va inserita in `site.js` (`vatNumber`) prima del Rilascio 1.
 
 Giorno 3, integrazione e test:
-- [ ] Widget chatbot e form contatti in `Base.astro`, riusando `assets/chat-widget.*` e la logica di `script.js`.
-- [ ] Pagina di prova vuota con il layout, fuori dalla sitemap.
-- [ ] `npm test` con `node:test`, pronto per i test della Fase 3.
+- [x] Widget chatbot in `Base.astro` (componente `ChatWidget`, attivo su ogni pagina, si toglie con `chat={false}`), riusando `public/assets/chat-widget.*` senza modificarli: le pagine vecchie e quelle nuove hanno lo stesso widget, sul nuovo layout cambiano solo colori e font tramite le variabili CSS.
+- [x] Form contatti come componente `ContactForm` (non nel layout: va solo nelle pagine che lo prevedono), con la logica di `script.js` portata in `src/scripts/contact-form.js`: stessi campi, honeypot `website`, trappola del tempo, Turnstile (chiave pubblica in `site.js`), evento `contact_submit` con `posizione`. `analytics.js` ora esporta `track`, condiviso da tutti gli script senza registrare due volte gli eventi.
+- [x] Pagina di prova con il layout: `/prova-layout/` (già `noindex`; la sitemap è il file statico `public/sitemap.xml`, quindi le pagine Astro non ci finiscono) con form e chatbot.
+- [x] `npm test` con `node:test`: `tests/contact-core.test.js`, 9 test su validazione, origine, rate limit, protezioni contro injection e Turnstile disattivato senza chiave.
+
+**Esito del giorno 3 (15/10):**
+- `npm test`: 9/9 superati. `npm run build`: nessun errore, `dist/index.html` identico a `public/index.html`.
+- `/prova-layout/` a 1280 e 375 px: form e chatbot con i colori e i font del design, nessun errore JS, nessuno scorrimento orizzontale.
+- Lighthouse su `/prova-layout/` (build locale): mobile prestazioni 97, accessibilità 100, best practice 96; desktop 100/100/96. SEO 63 solo perché la pagina di prova è `noindex` (voluto). Gli errori in console erano Turnstile e Umami non raggiungibili dall'ambiente di test.
+- Nota tecnica: i `node_modules` del Mac non funzionano su Linux (binario nativo di Rollup), quindi la build locale va fatta sul Mac o con `npm ci` in una copia pulita; su Vercel non cambia nulla.
+- **Da fare prima della PR:** sull'anteprima ripetere i 4 controlli della prova tecnica e un invio reale dal form di `/prova-layout/` (Turnstile attivo solo se la chiave segreta è nell'ambiente Preview); poi togliere `api/probe.js`, `api/_lib/probe.js`, `src/pages/prova-tecnica.astro` e `src/pages/prova-layout.astro`.
 
 **Test:** `npm run build` senza errori, i 4 controlli della prova tecnica superati sull'anteprima, Lighthouse ≥ 90 sulla pagina di prova, nessuna differenza visibile sulle pagine attuali.
 **Fatto quando:** PR con anteprima che supera tutti i test; il merge in produzione è invisibile ai visitatori (stesso sito di oggi).

@@ -1,0 +1,24 @@
+---
+// Chatbot widget (/api/chat). Reuses the old site's public/assets/chat-widget.*
+// unchanged, so the frozen pages and the new ones share one widget; here we
+// only map its CSS variables onto the new design tokens. Its stylesheet is
+// linked in the <head> by Base.astro.
+---
+
+<script is:inline src="/assets/chat-widget.js" defer></script>
+
+<style is:global>
+  .cw-fab,
+  .cw-panel {
+    --accent: var(--color-accent);
+    --accent-bright: var(--color-focus);
+    --text: var(--color-ink);
+    --ink: var(--color-ink);
+    --white: var(--color-surface);
+    --paper: var(--color-surface-alt);
+    --line: var(--color-border);
+    --line-soft: var(--color-border-soft);
+    --muted: var(--color-muted);
+    --muted-soft: var(--color-on-dark-muted);
+  }
+</style>

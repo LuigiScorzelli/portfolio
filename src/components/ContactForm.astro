@@ -1,0 +1,155 @@
+---
+// Contact form → /api/contact (same fields and anti-bot checks as the old
+// site: honeypot "website", time trap, Turnstile). Logic in
+// src/scripts/contact-form.js; contact_submit is tracked with "posizione".
+import { site } from "../data/site.js";
+
+interface Props {
+  position?: string;
+  lang?: "it" | "en";
+  id?: string;
+}
+
+const { position = "contatti", lang = "it", id = "cf" } = Astro.props;
+
+const t =
+  lang === "en"
+    ? {
+        honeypot: "Leave this field empty",
+        name: "Name",
+        namePh: "Your name",
+        email: "Email",
+        message: "What do you want to automate?",
+        messagePh: "Describe the process or the problem you want to solve",
+        submit: "Send request",
+      }
+    : {
+        honeypot: "Lascia vuoto questo campo",
+        name: "Nome",
+        namePh: "Il tuo nome",
+        email: "Email",
+        message: "Cosa vuoi automatizzare?",
+        messagePh: "Descrivi il processo o il problema che vuoi risolvere",
+        submit: "Invia richiesta",
+      };
+---
+
+<form class="contact-form" action="/api/contact" method="POST" data-track-pos={position}>
+  <div class="contact-form__honeypot" aria-hidden="true">
+    <label for={`${id}-website`}>{t.honeypot}</label>
+    <input type="text" id={`${id}-website`} name="website" tabindex="-1" autocomplete="off" />
+  </div>
+
+  <div class="contact-form__field">
+    <label for={`${id}-name`}>{t.name}</label>
+    <input type="text" id={`${id}-name`} name="name" required minlength="2" maxlength="100" autocomplete="name" placeholder={t.namePh} />
+  </div>
+  <div class="contact-form__field">
+    <label for={`${id}-email`}>{t.email}</label>
+    <input type="email" id={`${id}-email`} name="email" required maxlength="254" autocomplete="email" placeholder="tua@email.com" />
+  </div>
+  <div class="contact-form__field">
+    <label for={`${id}-message`}>{t.message}</label>
+    <textarea id={`${id}-message`} name="message" rows="4" required minlength="10" maxlength="5000" placeholder={t.messagePh}></textarea>
+  </div>
+
+  <div class="cf-turnstile" data-sitekey={site.turnstileSiteKey} data-action="contact" data-language={lang} data-size="flexible"></div>
+  <button type="submit" class="contact-form__submit">{t.submit}</button>
+  <p class="form-status" data-form-status role="status" aria-live="polite"></p>
+</form>
+
+<script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<script>
+  import "../scripts/contact-form.js";
+</script>
+
+<style>
+  .contact-form {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding: clamp(20px, 4vw, 32px);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+  }
+  .contact-form__honeypot {
+    position: absolute;
+    left: -9999px;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .contact-form__field {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .contact-form__field label {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+  .contact-form__field input,
+  .contact-form__field textarea {
+    width: 100%;
+    min-height: var(--tap-min);
+    padding: 11px 13px;
+    font: inherit;
+    font-size: 16px; /* no zoom on iOS */
+    color: var(--color-ink);
+    background: var(--color-surface);
+    border: 1px solid var(--color-input-border);
+    border-radius: var(--radius-md);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .contact-form__field textarea {
+    resize: vertical;
+    min-height: 110px;
+  }
+  .contact-form__field ::placeholder {
+    color: var(--color-muted);
+    opacity: 0.75;
+  }
+  .contact-form__field input:focus-visible,
+  .contact-form__field textarea:focus-visible {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px var(--color-accent-soft);
+  }
+  .cf-turnstile {
+    min-height: 65px;
+  }
+  .contact-form__submit {
+    min-height: var(--tap-lg);
+    padding: 0 24px;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: var(--color-accent);
+    color: #ffffff;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  .contact-form__submit:hover {
+    background: var(--color-accent-hover);
+  }
+  .contact-form__submit:disabled {
+    opacity: 0.6;
+    cursor: progress;
+  }
+  .form-status {
+    margin: 0;
+    min-height: 1.4em;
+    font-size: 15px;
+  }
+  .form-status.is-success {
+    color: var(--color-ok);
+  }
+  .form-status.is-error {
+    color: var(--color-loss);
+  }
+</style>

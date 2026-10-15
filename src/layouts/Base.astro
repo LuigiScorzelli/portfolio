@@ -1,9 +1,11 @@
 ---
-// Shared page shell: head (meta, OG, JSON-LD, Umami), header, footer.
+// Shared page shell: head (meta, OG, JSON-LD, Umami), header, footer and
+// chatbot widget (opt out with chat={false}).
 // Pages pass their own title/description/JSON-LD; everything else is here.
 import "../styles/global.css";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
+import ChatWidget from "../components/ChatWidget.astro";
 import { site } from "../data/site.js";
 
 interface Props {
@@ -14,6 +16,8 @@ interface Props {
   noindex?: boolean;
   lang?: "it" | "en";
   headerLinks?: { href: string; label: string }[];
+  /** Chatbot widget (/api/chat). On by default, like on the current site. */
+  chat?: boolean;
 }
 
 const {
@@ -24,6 +28,7 @@ const {
   noindex = false,
   lang = "it",
   headerLinks,
+  chat = true,
 } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, Astro.site).toString();
@@ -65,6 +70,7 @@ const jsonLdList = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
       data-website-id={site.umamiWebsiteId}
       data-domains={site.umamiDomains}
     ></script>
+    {chat && <link rel="stylesheet" href="/assets/chat-widget.css" />}
     <slot name="head" />
   </head>
   <body>
@@ -82,6 +88,7 @@ const jsonLdList = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
       <slot />
     </main>
     <Footer />
+    {chat && <ChatWidget />}
     <script>
       import "../scripts/analytics.js";
     </script>
