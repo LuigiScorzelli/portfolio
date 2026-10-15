@@ -1,0 +1,98 @@
+---
+// "Prenota" button → Calendly 30 min, with UTM and the cta_call event.
+// position is both utm_medium and the Umami "posizione" property, the same
+// pair the old site uses (header, hero, offerta, ...).
+import { site } from "../data/site.js";
+
+interface Props {
+  position: string;
+  label?: string;
+  variant?: "primary" | "dark" | "light" | "outline";
+  size?: "md" | "lg";
+  lang?: "it" | "en";
+  class?: string;
+}
+
+const {
+  position,
+  label = "Prenota 30 minuti",
+  variant = "primary",
+  size = "md",
+  lang = "it",
+  class: className,
+} = Astro.props;
+
+const url = new URL(site.calendlyUrl);
+url.searchParams.set("utm_source", "sito");
+url.searchParams.set("utm_medium", position);
+url.searchParams.set("utm_content", lang);
+---
+
+<a
+  href={url.toString()}
+  target="_blank"
+  rel="noopener"
+  class:list={["book-call", `book-call--${variant}`, `book-call--${size}`, className]}
+  data-track="cta_call"
+  data-track-pos={position}
+>
+  {label}
+  <span class="visually-hidden">(si apre in una nuova scheda)</span>
+</a>
+
+<style>
+  .book-call {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-pill);
+    text-decoration: none;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+  .book-call--md {
+    min-height: var(--tap-min);
+    padding: 0 18px;
+    font-size: 15px;
+    font-weight: 500;
+  }
+  .book-call--lg {
+    min-height: var(--tap-lg);
+    padding: 0 24px;
+    font-size: 17px;
+  }
+  .book-call--primary {
+    background: var(--color-accent);
+    color: #ffffff;
+  }
+  .book-call--primary:hover {
+    background: var(--color-accent-hover);
+    color: #ffffff;
+  }
+  .book-call--dark {
+    background: var(--color-ink);
+    color: #ffffff;
+  }
+  .book-call--dark:hover {
+    background: #000000;
+    color: #ffffff;
+  }
+  .book-call--light {
+    background: #ffffff;
+    color: var(--color-ink);
+  }
+  .book-call--light:hover {
+    background: var(--color-accent-soft);
+    color: var(--color-ink);
+  }
+  .book-call--outline {
+    border: 1.5px solid var(--color-ink);
+    color: var(--color-ink);
+    font-weight: 500;
+  }
+  .book-call--outline:hover {
+    background: var(--color-ink);
+    color: #ffffff;
+  }
+</style>

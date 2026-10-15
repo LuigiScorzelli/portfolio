@@ -1,0 +1,47 @@
+---
+// Site footer from the design. Only links to pages already live.
+import { site, footerLinks } from "../data/site.js";
+
+const year = new Date().getFullYear();
+const links = footerLinks.filter((l) => l.live);
+---
+
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <span>
+      © {year} {site.name} · {site.city}
+      {site.vatNumber && <> · P.IVA {site.vatNumber}</>}
+    </span>
+    <nav aria-label="Link del footer" class="site-footer__nav">
+      {links.map((l) => <a href={l.href}>{l.label}</a>)}
+      <a href={`mailto:${site.email}`}>{site.email}</a>
+      <a href={site.linkedin} target="_blank" rel="noopener">
+        LinkedIn <span aria-hidden="true">↗</span>
+      </a>
+    </nav>
+  </div>
+</footer>
+
+<style>
+  .site-footer__inner {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding-top: 32px;
+    padding-bottom: 32px;
+    font-size: 14px;
+    color: var(--color-muted);
+  }
+  .site-footer__nav {
+    display: flex;
+    gap: 8px 20px;
+    flex-wrap: wrap;
+  }
+  .site-footer__nav a {
+    color: var(--color-muted);
+  }
+  .site-footer__nav a:hover {
+    color: var(--color-ink);
+  }
+</style>

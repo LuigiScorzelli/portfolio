@@ -1,0 +1,105 @@
+---
+// Shared page shell: head (meta, OG, JSON-LD, Umami), header, footer.
+// Pages pass their own title/description/JSON-LD; everything else is here.
+import "../styles/global.css";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import { site } from "../data/site.js";
+
+interface Props {
+  title: string;
+  description: string;
+  ogImage?: string;
+  jsonLd?: object | object[];
+  noindex?: boolean;
+  lang?: "it" | "en";
+  headerLinks?: { href: string; label: string }[];
+}
+
+const {
+  title,
+  description,
+  ogImage = site.defaultOgImage,
+  jsonLd,
+  noindex = false,
+  lang = "it",
+  headerLinks,
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site).toString();
+const ogImageUrl = new URL(ogImage, Astro.site).toString();
+const jsonLdList = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {noindex ? <meta name="robots" content="noindex, nofollow" /> : <link rel="canonical" href={canonical} />}
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#EFF1ED" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.siteName} />
+    <meta property="og:locale" content={lang === "en" ? "en_US" : "it_IT"} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+
+    {jsonLdList.map((data) => <script type="application/ld+json" set:html={JSON.stringify(data)} />)}
+
+    <script
+      is:inline
+      defer
+      src="https://cloud.umami.is/script.js"
+      data-website-id={site.umamiWebsiteId}
+      data-domains={site.umamiDomains}
+    ></script>
+    <slot name="head" />
+  </head>
+  <body>
+    <a href="#contenuto" class="skip-link">Vai al contenuto</a>
+    {
+      Astro.slots.has("header-action") ? (
+        <Header links={headerLinks}>
+          <slot name="header-action" slot="action" />
+        </Header>
+      ) : (
+        <Header links={headerLinks} />
+      )
+    }
+    <main id="contenuto">
+      <slot />
+    </main>
+    <Footer />
+    <script>
+      import "../scripts/analytics.js";
+    </script>
+  </body>
+</html>
+
+<style>
+  .skip-link {
+    position: absolute;
+    left: 16px;
+    top: -100px;
+    z-index: 100;
+    padding: 10px 16px;
+    border-radius: var(--radius-md);
+    background: var(--color-ink);
+    color: #ffffff;
+  }
+  .skip-link:focus {
+    top: 12px;
+  }
+</style>

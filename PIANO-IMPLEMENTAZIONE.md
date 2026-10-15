@@ -272,9 +272,19 @@ Giorno 1, prova tecnica e inizializzazione:
 - Da sapere: `luigiscorzelli.com` reindirizza (308) a `www.luigiscorzelli.com`, mentre `canonical`, `hreflang`, sitemap e JSON-LD usano il dominio senza www. Da allineare (dominio principale su Vercel oppure URL nei file) prima della Fase 5, quando la sitemap va inviata a Search Console.
 
 Giorno 2, design di base:
-- [ ] `tokens.css` dai valori del design: `#EFF1ED` base, `#11161B` testo e sezioni scure, `#2340E8` azioni, `#B33A12` perdite, `#0F6E4B` esiti positivi.
-- [ ] Font Bricolage Grotesque, Geist e Geist Mono in locale con i pacchetti `@fontsource` (non da Google, per privacy e velocità).
-- [ ] Componenti condivisi: `Base.astro` (meta, OG, JSON-LD, Umami), `Header`, `Footer`, `BookCall` (link Calendly con UTM ed evento `cta_call`), `VideoFacade`.
+- [x] `tokens.css` dai valori del design: `#EFF1ED` base, `#11161B` testo e sezioni scure, `#2340E8` azioni, `#B33A12` perdite, `#0F6E4B` esiti positivi.
+- [x] Font Bricolage Grotesque, Geist e Geist Mono in locale con i pacchetti `@fontsource` (non da Google, per privacy e velocità).
+- [x] Componenti condivisi: `Base.astro` (meta, OG, JSON-LD, Umami), `Header`, `Footer`, `BookCall` (link Calendly con UTM ed evento `cta_call`), `VideoFacade`.
+
+**Esito del giorno 2 (15/10):**
+- `src/styles/tokens.css` (tutti i colori, i font e le misure del canvas, non solo i 5 principali) e `src/styles/global.css` (basi della pagina, focus visibile, `prefers-reduced-motion`).
+- Font da `@fontsource-variable` (Bricolage Grotesque con l'asse `opsz` come nel design): nessuna richiesta a Google; l'unico script esterno è Umami.
+- `src/data/site.js`: email, link Calendly, LinkedIn, Umami e link del footer in un solo posto. Nel footer compaiono solo le pagine già online (`live: true`), così non ci sono link a pagine 404 prima dei rilasci.
+- `BookCall`: stessa convenzione del sito attuale (`utm_source=sito`, `utm_medium` = posizione, `utm_content=it`, `data-track="cta_call"` + `data-track-pos`). `src/scripts/analytics.js` riprende la gestione degli eventi di `script.js`.
+- `VideoFacade`: immagine o segnaposto finché non si clicca, poi iframe `youtube-nocookie.com` ed evento `video_play` (D12).
+- `Base.astro`: canonical (o `noindex`), OG e Twitter, JSON-LD passato dalla pagina, Umami, link "Vai al contenuto", header con area destra sostituibile (es. "Sei una web agency? →" su `/visibilita-ai`).
+- Verificato su `/prova-layout/` (pagina temporanea `noindex`, da togliere prima del merge): font caricati, link Calendly con UTM corretti, iframe caricato solo al clic, nessun errore in console, nessuno scorrimento orizzontale a 375 px.
+- **Da decidere:** il footer del design mostra la P.IVA. Va inserita in `site.js` (`vatNumber`) prima del Rilascio 1.
 
 Giorno 3, integrazione e test:
 - [ ] Widget chatbot e form contatti in `Base.astro`, riusando `assets/chat-widget.*` e la logica di `script.js`.

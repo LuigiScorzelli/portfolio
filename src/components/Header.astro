@@ -1,0 +1,105 @@
+---
+// Site header from the design: logo, optional links, CTA on the right.
+// The right side defaults to the Calendly button; a page can replace it
+// through the "action" slot (e.g. /visibilita-ai links to /agenzie).
+import BookCall from "./BookCall.astro";
+import { site } from "../data/site.js";
+
+interface Props {
+  links?: { href: string; label: string }[];
+  sticky?: boolean;
+}
+
+const { links = [], sticky = true } = Astro.props;
+---
+
+<header class:list={["site-header", { "site-header--sticky": sticky }]}>
+  <div class="container site-header__inner">
+    <a href="/" class="site-header__brand">
+      <span class="site-header__logo" aria-hidden="true">LS</span>
+      <span class="site-header__name">{site.name}</span>
+    </a>
+    {
+      links.length > 0 && (
+        <nav aria-label="Navigazione principale" class="site-header__nav">
+          {links.map((l) => (
+            <a href={l.href}>{l.label}</a>
+          ))}
+        </nav>
+      )
+    }
+    <div class="site-header__action">
+      <slot name="action"><BookCall position="header" variant="dark" /></slot>
+    </div>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    background: rgba(239, 241, 237, 0.94);
+    border-bottom: 1px solid var(--color-border);
+  }
+  .site-header--sticky {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    backdrop-filter: saturate(1.2) blur(8px);
+  }
+  .site-header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+  .site-header__brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: var(--tap-min);
+    text-decoration: none;
+    color: var(--color-ink);
+  }
+  .site-header__logo {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-sm);
+    background: var(--color-ink);
+    color: #ffffff;
+    display: grid;
+    place-items: center;
+    font-family: var(--font-mono);
+    font-size: 14px;
+  }
+  .site-header__name {
+    font-weight: 600;
+    font-size: 16px;
+  }
+  .site-header__nav {
+    display: flex;
+    gap: 26px;
+    font-size: 15px;
+  }
+  .site-header__nav a {
+    color: var(--color-ink);
+    text-decoration: none;
+  }
+  .site-header__nav a:hover {
+    color: var(--color-accent);
+  }
+  .site-header__action :global(a:not(.book-call)) {
+    color: var(--color-ink);
+    font-size: 15px;
+  }
+  @media (max-width: 760px) {
+    .site-header__nav {
+      display: none;
+    }
+  }
+  @media (max-width: 400px) {
+    .site-header__name {
+      display: none;
+    }
+  }
+</style>

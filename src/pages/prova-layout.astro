@@ -1,0 +1,66 @@
+---
+// TEMPORARY (Fase 2): checks the shared layout and components on a near-empty
+// page (Lighthouse target ≥ 90). noindex; delete before merging.
+import Base from "../layouts/Base.astro";
+import BookCall from "../components/BookCall.astro";
+import VideoFacade from "../components/VideoFacade.astro";
+---
+
+<Base
+  title="Prova layout | Luigi Scorzelli"
+  description="Pagina di prova del nuovo layout."
+  noindex
+  headerLinks={[
+    { href: "#video", label: "Video" },
+    { href: "#pulsanti", label: "Pulsanti" },
+  ]}
+>
+  <section class="container prova">
+    <p class="eyebrow">Fase 2 · prova layout</p>
+    <h1>Titolo in Bricolage Grotesque, testo in Geist.</h1>
+    <p>Testo di prova con <code>Geist Mono</code> e un <a href="#pulsanti">link</a>.</p>
+
+    <div id="pulsanti" class="prova__buttons">
+      <BookCall position="prova-primary" size="lg" />
+      <BookCall position="prova-dark" variant="dark" size="lg" />
+      <BookCall position="prova-outline" variant="outline" size="lg" />
+      <div class="prova__accent"><BookCall position="prova-light" variant="light" size="lg" /></div>
+    </div>
+
+    <div id="video" class="prova__video">
+      <VideoFacade youtubeId="dQw4w9WgXcQ" title="Video di prova" duration="60 s" trackPos="prova" />
+    </div>
+  </section>
+</Base>
+
+<style>
+  .prova {
+    padding-top: var(--section-y);
+    padding-bottom: var(--section-y);
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .prova h1 {
+    font-size: clamp(40px, 5.2vw, 64px);
+    font-weight: 800;
+    max-width: 15em;
+  }
+  .prova code {
+    font-family: var(--font-mono);
+  }
+  .prova__buttons {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .prova__accent {
+    padding: 16px;
+    border-radius: var(--radius-lg);
+    background: var(--color-accent);
+  }
+  .prova__video {
+    max-width: 720px;
+  }
+</style>
