@@ -17,13 +17,14 @@ import {
 } from "./_contact-core.js";
 
 // ── Knowledge base ────────────────────────────────────────────────
-// llms.txt is the single source of truth about Luigi, loaded once at cold
+// public/llms.txt is the single source of truth about Luigi (bundled into
+// the function via includeFiles in vercel.json), loaded once at cold
 // start. ~2.8 KB — small and closed, so it lives entirely in the system
 // prompt (no RAG needed).
 const __dirname = dirname(fileURLToPath(import.meta.url));
 let KNOWLEDGE = "";
 try {
-  KNOWLEDGE = readFileSync(join(__dirname, "..", "llms.txt"), "utf8");
+  KNOWLEDGE = readFileSync(join(__dirname, "..", "public", "llms.txt"), "utf8");
 } catch (err) {
   console.error("Could not load llms.txt:", err.message);
 }

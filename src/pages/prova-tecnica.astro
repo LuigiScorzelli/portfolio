@@ -1,0 +1,18 @@
+---
+// TEMPORARY (Fase 2 technical probe): browser script importing api/_lib.
+// Delete before merging.
+---
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex" />
+    <title>Prova tecnica</title>
+  </head>
+  <body>
+    <p id="probe">in attesa…</p>
+    <script>
+      import { probeMessage } from "../../api/_lib/probe.js";
+      document.getElementById("probe").textContent = probeMessage("browser");
+    </script>
+  </body>
+</html>

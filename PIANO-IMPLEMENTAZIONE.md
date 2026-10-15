@@ -2,7 +2,7 @@
 title: "Piano di implementazione — restyling luigiscorzelli.com e lead magnet"
 status: bozza
 created: 2026-10-13
-updated: 2026-10-13 (revisione tecnica: salvataggio dati, api/_lib, llms.txt, PageSpeed, Calendly, calendario in due rilasci)
+updated: 2026-10-15 (Fase 2 dettagliata: sito attuale in public/ fino alla Fase 7, URL dei case study invariati, llms.txt letto da public/)
 fonti:
   - "~/Downloads/piano-acquisizione-lead-magnet.md (strategia, specifiche dei lead magnet)"
   - "Canvas di design: https://claude.ai/artifact/S85wx3BYHmU9ohuDBnRvSv"
@@ -129,7 +129,7 @@ Tempo stimato per un sito WordPress con controlli automatici e modelli pronti: 3
  │                                                                  │
  │  Funzioni /api (Node)                                            │
  │   contact.js   (esistente)                                       │
- │   chat.js      (esistente, legge _data/llms.txt)                 │
+ │   chat.js      (esistente, legge public/llms.txt)                │
  │   checkup.js   NUOVA: valida → calcola → risponde subito         │
  │                       → se email+consenso: inoltra a n8n         │
  │   audit.js     NUOVA: valida URL (anti-SSRF) → 4 GET in          │
@@ -170,7 +170,6 @@ Principi:
 landingpage/
 ├── api/                     # invariata + checkup.js, audit.js
 │   ├── _lib/                # checkup-score.js, audit-checks.js, ssrf-guard.js, n8n-client.js, store.js (Redis)
-│   └── _data/llms.txt       # copia letta da chat.js (generata in build da public/llms.txt)
 ├── src/
 │   ├── layouts/Base.astro   # head, meta, JSON-LD, header, footer, Umami
 │   ├── components/          # Header, Footer, Calculator, Timeline, DemoCard,
@@ -184,13 +183,13 @@ landingpage/
 │   │   └── casi/[slug].astro
 │   ├── scripts/             # calculator.js, checkup-wizard.js, audit-form.js, analytics.js
 │   └── styles/tokens.css    # colori, font, spazi dal design
-├── public/                  # llms.txt, robots.txt, favicon, immagini, video, en.html e case study EN (congelati)
+├── public/                  # llms.txt, robots.txt, favicon, immagini, video + sito attuale IT/EN congelato fino alla Fase 7
 ├── tests/                   # node:test
 ├── .vercelignore            # esclude design_handoff_portfolio/, strategie-trader-dev/, *.md interni
-└── vercel.json              # redirect 301, includeFiles per chat.js, maxDuration per audit.js
+└── vercel.json              # framework astro, includeFiles per chat.js, maxDuration per audit.js (dalla Fase 3)
 ```
 
-**`llms.txt` e chatbot:** il file pubblico resta `public/llms.txt` (fonte unica da modificare). Uno script di build lo copia in `api/_data/llms.txt` e `chat.js` legge da lì (`join(__dirname, "_data", "llms.txt")`), con `includeFiles` in `vercel.json` per essere sicuri che il file finisca nel pacchetto della funzione. In alternativa, `chat.js` può leggere direttamente `public/llms.txt` sempre tramite `includeFiles`: la prova tecnica della Fase 2 decide quale delle due funziona.
+**`llms.txt` e chatbot:** il file pubblico resta `public/llms.txt` (fonte unica da modificare). `chat.js` lo legge direttamente da lì, con `includeFiles` in `vercel.json` per essere sicuri che il file finisca nel pacchetto della funzione (decisione del 15/10). Riserva, se la prova tecnica della Fase 2 fallisce: uno script di build lo copia in `api/_data/llms.txt` e `chat.js` legge la copia.
 
 ---
 
@@ -246,20 +245,34 @@ Prima del rename dell'email: `grep -rn "luigidev2018" . --exclude-dir=node_modul
 
 ### Fase 2 — Fondamenta del nuovo sito (21–23/10, ~3 giorni)
 
-- [ ] **Prova tecnica (mezza giornata, prima di tutto):** progetto Astro minimo + la cartella `api/` esistente → deploy di anteprima su Vercel → verificare:
-  - `/api/contact` invia ancora;
-  - `/api/chat` risponde **usando `llms.txt`** dalla nuova posizione (domanda di controllo: "qual è l'email di Luigi?"), con `includeFiles` in `vercel.json`;
-  - un file di prova in `api/_lib/` **non** è raggiungibile come URL (deve rispondere 404);
-  - un modulo di `api/_lib/` si importa sia da una funzione sia da uno script del browser.
-  Se uno di questi fallisce, si torna a D1 e si resta in HTML puro.
-- [ ] Inizializzare Astro (output statico), spostare gli asset in `public/`, script di build che copia `public/llms.txt` in `api/_data/llms.txt`.
-- [ ] `tokens.css` dai valori del design: `#EFF1ED` base, `#11161B` testo e sezioni scure, `#2340E8` azioni, `#B33A12` perdite, `#0F6E4B` esiti positivi, font Bricolage Grotesque, Geist e Geist Mono (caricati in locale, non da Google, per privacy e velocità).
-- [ ] Componenti condivisi: `Base.astro` (meta, OG, JSON-LD, Umami), `Header`, `Footer`, `BookCall` (link Calendly con UTM ed evento `cta_call`), `VideoFacade`.
-- [ ] Riportare il widget chatbot e il form contatti nel layout.
-- [ ] `vercel.json`: redirect 301 dai vecchi URL dei case study verso `/casi/...` (o mantenere gli stessi URL, che è più semplice); `includeFiles` per `chat.js`; `maxDuration` per `audit.js`.
-- [ ] Pagine EN e case study EN copiate in `public/` così come sono (D10).
+Decisioni del 15/10:
+- **Il sito attuale resta online così com'è fino alla Fase 7.** Homepage IT, `en.html`, i 6 case study (IT + EN), `404.html`, `styles.css`, `script.js` e `assets/` vanno in `public/` senza modifiche. Finché non c'è la nuova homepage **non si crea `src/pages/index.astro`**, perché andrebbe in conflitto con `public/index.html`.
+- **URL dei case study invariati** (`case-study-*.html`) per tutto il Rilascio 1; il passaggio a `/casi/...` con redirect 301 si decide nella Fase 7.
+- **`llms.txt`: prima la soluzione più semplice.** `chat.js` legge direttamente `public/llms.txt` con `includeFiles` (nessuno script di copia, nessun file generato). Se la prova tecnica fallisce, si passa alla copia in `api/_data/llms.txt` durante il build.
+- **`maxDuration` per `audit.js` passa alla Fase 3:** Vercel blocca il build se una regola `functions` di `vercel.json` punta a un file che non esiste ancora.
 
-**Test:** `npm run build` senza errori, i 4 controlli della prova tecnica superati sull'anteprima, Lighthouse ≥ 90 su una pagina vuota col layout.
+Giorno 1, prova tecnica e inizializzazione:
+- [ ] Branch `feat/fase-2-astro`. Astro minimo in output statico, cartella `api/` invariata, `vercel.json` con `"framework": "astro"` (oggi il progetto è pubblicato come HTML statico; l'output diventa `dist/`) e `includeFiles` per `chat.js`.
+- [ ] **Prova tecnica (mezza giornata, prima di tutto)** sull'anteprima Vercel:
+  - `/api/contact` invia ancora;
+  - `/api/chat` risponde **usando `llms.txt`** dalla nuova posizione (domanda di controllo: "qual è l'email di Luigi?" → `luigiscorzelli@aiframe.it`);
+  - un file di prova `api/_lib/probe.js` **non** è raggiungibile come URL (deve rispondere 404);
+  - lo stesso modulo di `api/_lib/` si importa sia da una funzione sia da uno `<script>` di Astro.
+  Se uno di questi fallisce, ci si ferma e si torna a D1 (HTML puro).
+- [ ] Sito attuale completo in `public/` (vedi decisioni sopra) e confronto prima/dopo: tutti gli URL di oggi rispondono uguale.
+
+Giorno 2, design di base:
+- [ ] `tokens.css` dai valori del design: `#EFF1ED` base, `#11161B` testo e sezioni scure, `#2340E8` azioni, `#B33A12` perdite, `#0F6E4B` esiti positivi.
+- [ ] Font Bricolage Grotesque, Geist e Geist Mono in locale con i pacchetti `@fontsource` (non da Google, per privacy e velocità).
+- [ ] Componenti condivisi: `Base.astro` (meta, OG, JSON-LD, Umami), `Header`, `Footer`, `BookCall` (link Calendly con UTM ed evento `cta_call`), `VideoFacade`.
+
+Giorno 3, integrazione e test:
+- [ ] Widget chatbot e form contatti in `Base.astro`, riusando `assets/chat-widget.*` e la logica di `script.js`.
+- [ ] Pagina di prova vuota con il layout, fuori dalla sitemap.
+- [ ] `npm test` con `node:test`, pronto per i test della Fase 3.
+
+**Test:** `npm run build` senza errori, i 4 controlli della prova tecnica superati sull'anteprima, Lighthouse ≥ 90 sulla pagina di prova, nessuna differenza visibile sulle pagine attuali.
+**Fatto quando:** PR con anteprima che supera tutti i test; il merge in produzione è invisibile ai visitatori (stesso sito di oggi).
 **Rischio principale:** compatibilità tra Astro e le funzioni `/api` (coperto dalla prova tecnica).
 
 ### Fase 3 — Audit visibilità AI (26–30/10, ~5 giorni)
@@ -278,7 +291,7 @@ Prima del check-up perché serve subito per l'outbound verso le web agency (ICP 
    - segue al massimo 3 redirect ricontrollando ogni salto;
    - timeout di 8 s per richiesta, risposte limitate a 2 MB, user-agent identificabile (`LuigiScorzelliAuditBot/1.0 (+https://luigiscorzelli.com/visibilita-ai)`).
 3. `api/_lib/audit-checks.js`: i controlli della sezione 5.2 del piano, con i loro pesi (robots per GPTBot, OAI-SearchBot, ClaudeBot, PerplexityBot e Google-Extended; sitemap; JSON-LD Organization/LocalBusiness, Service/Product, FAQPage; `llms.txt`; H1 e meta description; FAQ; dati aziendali in testo; HTTPS e contenuto nell'HTML iniziale). **Il controllo PageSpeed non dà punti (D15):** i 5 punti che il piano gli assegnava vanno ridistribuiti sugli altri controlli, così il punteggio resta su 100 ed è lo stesso a schermo, in HubSpot e nel PDF.
-4. `api/audit.js`: validazione (zod), Turnstile, rate limit e cache tramite `store.js`, le 4 GET (pagina, `robots.txt`, `sitemap.xml`, `llms.txt`) **in parallelo** con un tempo massimo complessivo di 15 s, `maxDuration` di 30 s in `vercel.json`; risposta con punteggio, livello e controlli.
+4. `api/audit.js`: validazione (zod), Turnstile, rate limit e cache tramite `store.js`, le 4 GET (pagina, `robots.txt`, `sitemap.xml`, `llms.txt`) **in parallelo** con un tempo massimo complessivo di 15 s, `maxDuration` di 30 s in `vercel.json` (regola da aggiungere insieme al file, non prima); risposta con punteggio, livello e controlli.
 5. Workflow n8n `audit-report`: webhook firmato (HMAC + timestamp) → PageSpeed (sezione "velocità" del report, senza punteggio) → LLM (5 correzioni + snippet adattati) → HTML → PDF → email → HubSpot (`audit_score`, `audit_tipo`, `audit_url`) → avviso a Luigi se tipo = agenzia.
 6. **Versione per l'outbound:** script `scripts/audit-batch.mjs` che legge un CSV di URL, usa le stesse `audit-checks.js` e `ssrf-guard.js` e salva PDF e risultati in una cartella, senza inviare email.
 7. Pagina `/visibilita-ai` dal design, con modulo, stato di caricamento, risultato e le due CTA (azienda → Calendly / agenzia → `/agenzie`).
@@ -437,7 +450,7 @@ Più i parametri UTM su ogni link usato in LinkedIn e nell'outbound. Dashboard: 
 | L'audit usato per attaccare reti interne (SSRF) | Alto | `ssrf-guard.js` con controllo DNS e degli IP a ogni redirect, test dedicati, limiti per IP e dominio |
 | DNS rebinding (il dominio cambia IP tra controllo e richiesta) | Alto | IP controllato bloccato sulla connessione (`lookup` personalizzata), test con risolutore finto |
 | Rate limit aggirabile (memoria per istanza) | Medio | Rate limit di audit e check-up su Redis (D13); quello in memoria resta solo come riserva |
-| Chatbot senza conoscenza dopo la migrazione | Medio | `llms.txt` copiato in `api/_data/` + `includeFiles`; verificato nella prova tecnica e nella lista di controllo |
+| Chatbot senza conoscenza dopo la migrazione | Medio | `chat.js` legge `public/llms.txt` con `includeFiles` (riserva: copia in `api/_data/`); verificato nella prova tecnica e nella lista di controllo |
 | Moduli interni pubblicati come endpoint | Basso | Cartella `api/_lib/` (il prefisso `_` li esclude); verificato con un 404 |
 | Webhook verso n8n riutilizzato (replay) | Medio | Firma HMAC su timestamp + corpo, finestra di 5 minuti |
 | L'LLM inserisce numeri inventati nel report | Alto per la credibilità | Numeri calcolati solo dal codice; controllo automatico dei numeri nel testo; testo di riserva |
@@ -446,7 +459,7 @@ Più i parametri UTM su ogni link usato in LinkedIn e nell'outbound. Dashboard: 
 | Astro non compatibile con le `/api` esistenti | Medio | Prova tecnica all'inizio della Fase 2; ritorno all'HTML puro se fallisce |
 | Email dei report nello spam | Medio | Dominio verificato, nessun allegato pesante (PDF < 1 MB), testo semplice + link |
 | GDPR (dati a provider LLM, Calendly, Brevo, Upstash) | Medio | Informativa aggiornata, minimo indispensabile all'LLM, revisione dell'esperto, Apollo rinviato |
-| Perdita di posizionamento cambiando URL | Basso | Mantenere gli URL dei case study o redirect 301 |
+| Perdita di posizionamento cambiando URL | Basso | URL dei case study invariati nel Rilascio 1; eventuale passaggio a `/casi/...` con redirect 301 nella Fase 7 |
 | Garanzia o prezzi non sostenibili | Medio | D2 e D3 chiuse prima di pubblicare la homepage |
 | Ritardi accumulati senza margine | Medio | Due rilasci con margine (6/11 e 25–26/11); se il Rilascio 1 slitta oltre il 6/11, il check-up passa dopo il 9/11 senza toccare l'E07 |
 | Troppe cose in parallelo (diagnosi del piano) | Alto | Una fase di sviluppo alla volta, nessuna sovrapposizione; l'outbound verso l'ICP A parte con il Rilascio 1, il resto aspetta |
