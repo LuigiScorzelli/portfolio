@@ -14,7 +14,7 @@ Le API key restano server-side, mai esposte nel frontend.
 | Variabile            | Obbligatoria | Descrizione                                                                 |
 | -------------------- | ------------ | -------------------------------------------------------------------------- |
 | `RESEND_API_KEY`     | Sì           | API key da https://resend.com/api-keys                                     |
-| `CONTACT_TO_EMAIL`   | No           | Dove ricevi la notifica. Default nel codice: `luigi.scorzelli87@gmail.com`; in produzione e anteprima impostare `luigiscorzelli@aiframe.it`                 |
+| `CONTACT_TO_EMAIL`   | No           | Dove ricevi la notifica. Default nel codice: `luigiscorzelli@aiframe.it` |
 | `CONTACT_FROM_EMAIL` | No           | Mittente verificato. Default test: `onboarding@resend.dev`                 |
 | `HUBSPOT_TOKEN`      | No¹          | Token della Private App HubSpot (scope `crm.objects.contacts.write`)       |
 | `TURNSTILE_SECRET_KEY` | No²       | Secret key di Cloudflare Turnstile (anti-bot). Vedi sezione 3b             |

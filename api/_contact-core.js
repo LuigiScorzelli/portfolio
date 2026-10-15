@@ -12,7 +12,7 @@ import { Resend } from "resend";
 // TURNSTILE_SECRET_KEY  — Cloudflare Turnstile secret (anti-bot). If unset, check is skipped.
 const {
   RESEND_API_KEY,
-  CONTACT_TO_EMAIL = "luigi.scorzelli87@gmail.com",
+  CONTACT_TO_EMAIL = "luigiscorzelli@aiframe.it",
   CONTACT_FROM_EMAIL = "onboarding@resend.dev",
   HUBSPOT_TOKEN,
   TURNSTILE_SECRET_KEY,

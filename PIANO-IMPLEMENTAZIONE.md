@@ -35,7 +35,7 @@ Obiettivo: mettere online il nuovo sito (homepage, `/check-up`, `/visibilita-ai`
 | Variabili d'ambiente in uso | `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, `CONTACT_FROM_EMAIL`, `HUBSPOT_TOKEN`, `TURNSTILE_SECRET_KEY`, `TURNSTILE_HOSTNAMES`, `CHAT_MODEL` |
 | SEO/GEO | `robots.txt`, `sitemap.xml`, `llms.txt`, JSON-LD Person/WebSite/FAQPage |
 | VPS n8n (verificata e messa in sicurezza il 13/10) | Hetzner `portfolio-vps`, progetto "Portfolio": CX23 (2 vCPU, 4 GB RAM, 40 GB disco), Falkenstein, IP `167.233.196.196`, Ubuntu 26.04 LTS. Container (compose in `/opt/portfolio/progetto-1-whatsapp-rag/`): `nginx:alpine` (reverse proxy, porte 80/443), `n8nio/n8n:2.27.3` (database SQLite, nessun Postgres), `certbot` (rinnovo ogni 12 h). Dominio n8n: `studidentisticorossi.duckdns.org` (certificato Let's Encrypt valido fino al 21/11/2026). Dopo il riavvio: 3,1 GB di RAM disponibili, 28 GB di disco liberi |
-| Problemi noti | email `luigidev2018@gmail.com` ovunque (anche in JSON-LD e `llms.txt`), call da 15 min, titolo "5 case study" con 4 schede visibili (3 con pagina dedicata + "Estrazione dati da PDF" senza pagina), nessuna misurazione, case study non dichiarati dimostrativi in homepage |
+| Problemi noti | vecchia email Gmail ovunque (anche in JSON-LD e `llms.txt`), call da 15 min, titolo "5 case study" con 4 schede visibili (3 con pagina dedicata + "Estrazione dati da PDF" senza pagina), nessuna misurazione, case study non dichiarati dimostrativi in homepage |
 | File non tracciati | `CHATBOT-TEST.md`, `demo-visibili-piano-implementazione.md`, `strategie-trader-dev/` (da decidere se tenerli fuori dal repo) |
 | File tracciati e pubblicati per errore | `design_handoff_portfolio/` (contiene anche la vecchia email e una vecchia versione del sito): non esiste `.vercelignore`, quindi viene servita in produzione |
 
@@ -219,9 +219,9 @@ Le date presumono circa 4 ore al giorno sul progetto (la quota Freelance/Agenzia
 - [ ] Creare o verificare gli account: Brevo, Upstash Redis (dal Marketplace Vercel), chiave API PageSpeed Insights (Google Cloud).
 - [ ] DNS di `aiframe.it`: casella `luigiscorzelli@aiframe.it`, dominio verificato in Resend (SPF, DKIM, DMARC).
 - [x] VPS di n8n (D9): verificata e messa in sicurezza il 13/10 (vedi "VPS: interventi del 13/10" nella sezione 1).
-- [ ] Attivare la 2FA sull'account Hetzner (segnalata dalla console come non attiva).
+- [x] Attivare la 2FA sull'account Hetzner: attiva dal 14/10 (Google Authenticator, chiave di recupero conservata).
 - [ ] HubSpot: creare le proprietà personalizzate (sezione 4).
-- [ ] Ripulire il repository: decidere se `strategie-trader-dev/`, `CHATBOT-TEST.md` e `demo-visibili-piano-implementazione.md` vanno in `.gitignore` o spostati; creare `.vercelignore` per non pubblicare `design_handoff_portfolio/`, `strategie-trader-dev/` e i file `.md` interni.
+- [x] Ripulire il repository (14/10, PR #5): `.claude/` in `.gitignore`, `CHATBOT-TEST.md` nel repository, il vecchio piano `demo-visibili-piano-implementazione.md` spostato nella cartella `portfoglio`; `.vercelignore` già creato nella Fase 1.
 
 **Fatto quando:** D13 e D15 hanno una risposta scritta nella sezione 1 e tutti gli account rispondono.
 
