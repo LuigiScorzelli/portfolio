@@ -2,7 +2,7 @@
 title: "Piano di implementazione — restyling luigiscorzelli.com e lead magnet"
 status: bozza
 created: 2026-10-13
-updated: 2026-10-15 (Fase 2 dettagliata: sito attuale in public/ fino alla Fase 7, URL dei case study invariati, llms.txt letto da public/)
+updated: 2026-10-15 (Fase 2 dettagliata; giorno 1 completato: prova tecnica superata, D1 confermata)
 fonti:
   - "~/Downloads/piano-acquisizione-lead-magnet.md (strategia, specifiche dei lead magnet)"
   - "Canvas di design: https://claude.ai/artifact/S85wx3BYHmU9ohuDBnRvSv"
@@ -47,7 +47,7 @@ Bloccano il lavoro: vanno chiuse nella Fase 0. Al 14/10 sono tutte chiuse.
 
 | # | Decisione | Proposta | Blocca |
 | --- | --- | --- | --- |
-| D1 | Tecnologia del nuovo sito | ✅ **Deciso: Astro in output statico**, JS vanilla per le parti interattive, funzioni `/api` di Vercel invariate. Condizione: la prova tecnica della Fase 2 deve confermare che `/api/contact` e `/api/chat` funzionano; altrimenti HTML puro | Fase 2 |
+| D1 | Tecnologia del nuovo sito | ✅ **Deciso: Astro in output statico**, JS vanilla per le parti interattive, funzioni `/api` di Vercel invariate. Condizione: la prova tecnica della Fase 2 deve confermare che `/api/contact` e `/api/chat` funzionano; altrimenti HTML puro. **Confermato il 15/10 dalla prova tecnica** (esito nella Fase 2) | Fase 2 |
 | D2 | Garanzia | ✅ **Decisa** (testo e regole operative sotto la tabella) | Fase 7 |
 | D3 | Canone mensile | ✅ **Deciso: 300 €/mese**, nessun vincolo, disdetta con 30 giorni (voci incluse sotto la tabella) | Fase 7 |
 | D4 | Prezzo white label "siti pronti per l'AI" (D7 del piano) | ✅ **Deciso** (listino sotto la tabella), da verificare con 2–3 agenzie di E07 | Fase 4 |
@@ -252,14 +252,24 @@ Decisioni del 15/10:
 - **`maxDuration` per `audit.js` passa alla Fase 3:** Vercel blocca il build se una regola `functions` di `vercel.json` punta a un file che non esiste ancora.
 
 Giorno 1, prova tecnica e inizializzazione:
-- [ ] Branch `feat/fase-2-astro`. Astro minimo in output statico, cartella `api/` invariata, `vercel.json` con `"framework": "astro"` (oggi il progetto è pubblicato come HTML statico; l'output diventa `dist/`) e `includeFiles` per `chat.js`.
-- [ ] **Prova tecnica (mezza giornata, prima di tutto)** sull'anteprima Vercel:
+- [x] Branch `feat/fase-2-astro`. Astro minimo in output statico, cartella `api/` invariata, `vercel.json` con `"framework": "astro"` (oggi il progetto è pubblicato come HTML statico; l'output diventa `dist/`) e `includeFiles` per `chat.js`.
+- [x] **Prova tecnica (mezza giornata, prima di tutto)** sull'anteprima Vercel:
   - `/api/contact` invia ancora;
   - `/api/chat` risponde **usando `llms.txt`** dalla nuova posizione (domanda di controllo: "qual è l'email di Luigi?" → `luigiscorzelli@aiframe.it`);
   - un file di prova `api/_lib/probe.js` **non** è raggiungibile come URL (deve rispondere 404);
   - lo stesso modulo di `api/_lib/` si importa sia da una funzione sia da uno `<script>` di Astro.
   Se uno di questi fallisce, ci si ferma e si torna a D1 (HTML puro).
-- [ ] Sito attuale completo in `public/` (vedi decisioni sopra) e confronto prima/dopo: tutti gli URL di oggi rispondono uguale.
+- [x] Sito attuale completo in `public/` (vedi decisioni sopra) e confronto prima/dopo: tutti gli URL di oggi rispondono uguale.
+
+**Esito del giorno 1 (15/10, anteprima `portfolio-neyg7rnte-…vercel.app`, commit `75ee342`):**
+- Build Astro superato in locale e su Vercel con `"framework": "astro"`; `dist/` = `public/` + la pagina di prova.
+- `/api/_lib/probe`, `/api/_lib/probe.js` e `/api/_contact-core` → 404. `api/_lib/probe.js` importato sia da `api/probe.js` sia dallo script di `/prova-tecnica/`.
+- Chatbot: alla domanda di controllo risponde con `luigiscorzelli@aiframe.it` e il link Calendly, presenti solo in `public/llms.txt`. **La lettura diretta da `public/` funziona: la copia in `api/_data/` non serve.**
+- Form contatti: invio reale verificato a mano da Luigi; la validazione risponde come prima.
+- Confronto con la produzione su 29 URL (pagine della sitemap, varianti senza `.html`, `/index.html`, asset, `/api/*`, pagina inesistente, `design_handoff_portfolio/`): codici di risposta identici; asset e pagine HTML identici byte per byte, a parte lo script della barra di Vercel che le anteprime aggiungono in coda alle pagine. La 404 personalizzata resta.
+- File di prova (`api/probe.js`, `api/_lib/probe.js`, `src/pages/prova-tecnica.astro`): restano fino alla fine della Fase 2 per ripetere i controlli, **da togliere prima del merge**.
+- Da sapere: sulle anteprime Turnstile non è attivo (una richiesta senza token supera il controllo), quindi `TURNSTILE_SECRET_KEY` non arriva all'ambiente Preview. Va bene per i test; da rivedere nella Fase 3 se servono test anti-bot sulle anteprime (servirebbe anche `TURNSTILE_HOSTNAMES` per Preview).
+- Da sapere: `luigiscorzelli.com` reindirizza (308) a `www.luigiscorzelli.com`, mentre `canonical`, `hreflang`, sitemap e JSON-LD usano il dominio senza www. Da allineare (dominio principale su Vercel oppure URL nei file) prima della Fase 5, quando la sitemap va inviata a Search Console.
 
 Giorno 2, design di base:
 - [ ] `tokens.css` dai valori del design: `#EFF1ED` base, `#11161B` testo e sezioni scure, `#2340E8` azioni, `#B33A12` perdite, `#0F6E4B` esiti positivi.
